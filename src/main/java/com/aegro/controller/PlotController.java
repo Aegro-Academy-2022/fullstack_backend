@@ -32,7 +32,7 @@ public class PlotController {
 			
 			return new ResponseEntity<>(_plot, HttpStatus.CREATED);
 		}catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
@@ -42,7 +42,7 @@ public class PlotController {
 			List<Plot> plots = plotRepo.findAllByFarmFk(fk);
 			
 			if(plots.isEmpty()) {
-				return new ResponseEntity<>(plots, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(plots, HttpStatus.NO_CONTENT);
 			}
 			
 			return new ResponseEntity<>(plots, HttpStatus.OK);

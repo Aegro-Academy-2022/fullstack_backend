@@ -24,6 +24,13 @@ public class Plot {
 		this.area = area;
 		this.fkFarm = fkFarm;
 	}
+	
+	public Plot(String id, String name, BigDecimal area, String fkFarm) {
+		this.id = id;
+		this.name = name;
+		this.area = area;
+		this.fkFarm = fkFarm;
+	}
 
 	public String getId() {
 		return id;
