@@ -11,9 +11,15 @@ public class Farm {
 	
 	@Id
 	private String id;
+	
 	private String name;
 	
 	public Farm(String name) {
+		this.name = name;
+	}
+	
+	public Farm(String id, String name) {
+		this.id = id;
 		this.name = name;
 	}
 	
@@ -31,4 +37,7 @@ public class Farm {
 		this.id = id;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
 }
