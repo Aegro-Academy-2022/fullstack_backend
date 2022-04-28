@@ -13,11 +13,11 @@ import com.aegro.model.Plot;
 public interface PlotRepository extends MongoRepository<Plot, String>{
 	
 	@Query("{'fkFarm' : ?0}")
-	List<Plot> findAllByFarmFk(String fk);
+	List<Plot> findAllByFarmFk(String fkFarm);
 	
 	@Query("{'fkFarm' : ?0, 'id' : ?1}")
-	Optional<Plot> findPlotById(String fk, String id);
+	Optional<Plot> findPlotById(String fkFarm, String id);
 	
 	@Query(value = "{'fkFarm' : ?0, 'id' : ?1}", delete = true)
-	void deletePlotById(String fk, String id);
+	void deletePlotById(String fkFarm, String id);
 }

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aegro.model.Farm;
 import com.aegro.model.Plot;
 import com.aegro.repository.PlotRepository;
 
@@ -87,7 +86,7 @@ public class PlotController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Farm> deletePlot(@PathVariable("fk") String fk, @PathVariable("id") String id){
+	public ResponseEntity<Plot> deletePlot(@PathVariable("fk") String fk, @PathVariable("id") String id){
 		try {
 			plotRepo.deletePlotById(fk, id);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
