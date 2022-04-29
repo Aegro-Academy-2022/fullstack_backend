@@ -7,6 +7,8 @@ import javax.persistence.Id;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Document(collection="Plot")
 public class Plot {
@@ -62,6 +64,14 @@ public class Plot {
 
 	public void setFkFarm(String fkFarm) {
 		this.fkFarm = fkFarm;
+	}
+	
+	@JsonIgnore
+	public boolean isNull() {
+		if(this.name == null && this.id ==null) {
+			return true;
+		}
+		return false;
 	}
 
 }

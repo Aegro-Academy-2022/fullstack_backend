@@ -15,6 +15,9 @@ public class FarmRepository {
 	
 	@Autowired
 	MongoTemplate mongoTemplate;
+	
+	@Autowired
+	PlotRepository plotRepo;
 
 	public Farm save(Farm farm) {
 		return mongoTemplate.save(new Farm(farm.getName()));
@@ -42,9 +45,10 @@ public class FarmRepository {
 	
 	public DeleteResult delete(String id) {
 		Farm farm = mongoTemplate.findById(id, Farm.class);
-		if(farm.isNull()) {
+		if(farm.isNull() || !plotRepo.deleteAll(farm.getId()).isEmpty()) {
 			return null;
 		}
+		
 		return mongoTemplate.remove(farm);
 	}
 

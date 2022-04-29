@@ -15,7 +15,8 @@ public class FarmServiceImpl implements FarmService {
 	@Autowired
 	private FarmRepository farmRepo;
 	
-	private Validation validation = new Validation();
+	@Autowired
+	private Validation validation;
 
 	@Override
 	public Farm insert(Farm farm) {
