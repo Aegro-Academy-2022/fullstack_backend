@@ -2,7 +2,6 @@ package com.aegro.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.aegro.model.Farm;
-import com.aegro.repository.FarmRepository;
+import com.aegro.service.FarmServiceImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -30,12 +29,12 @@ public class FarmControllerTest {
 	@LocalServerPort
 	private int port;
 	@MockBean
-	private FarmRepository farmRepo;
+	private FarmServiceImpl farmService;
 	
 	@Test
 	public void deveriaCriarNovaFazenda() {
 		Farm farm = new Farm("Test Farm");
-		Mockito.when(farmRepo.save(farm)).thenReturn(farm);
+		Mockito.when(farmService.insert(farm)).thenReturn(farm);
 		
 		ResponseEntity<String> response = restTemplate.postForEntity("/api/v1/farms",farm, String.class);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.CREATED);
@@ -44,7 +43,7 @@ public class FarmControllerTest {
 	@Test
 	public void naoDeveriaCriarFazendaComNomeEmBranco() {
 		Farm farm = new Farm("  ");
-		Mockito.when(farmRepo.save(farm)).thenReturn(farm);
+		Mockito.when(farmService.insert(farm)).thenReturn(farm);
 		
 		ResponseEntity<String> response = restTemplate.postForEntity("/api/v1/farms",farm, String.class);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
@@ -53,7 +52,7 @@ public class FarmControllerTest {
 	@Test
 	public void naoDeveriaCriarFazendaComNomeVazio() {
 		Farm farm = new Farm("");
-		Mockito.when(farmRepo.save(farm)).thenReturn(farm);
+		Mockito.when(farmService.insert(farm)).thenReturn(farm);
 		
 		ResponseEntity<String> response = restTemplate.postForEntity("/api/v1/farms",farm, String.class);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
@@ -62,7 +61,7 @@ public class FarmControllerTest {
 	@Test
 	public void naoDeveriaCriarFazendaComNomeNulo() {
 		Farm farm = new Farm(null);
-		Mockito.when(farmRepo.save(farm)).thenReturn(null);
+		Mockito.when(farmService.insert(farm)).thenReturn(null);
 		
 		ResponseEntity<String> response = restTemplate.postForEntity("/api/v1/farms",farm, String.class);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -72,7 +71,7 @@ public class FarmControllerTest {
 	public void deveriaRetornarListaVaziaDeFazendas() {
 		List<Farm> farms = new ArrayList<>();
 		
-		Mockito.when(farmRepo.findAll()).thenReturn(farms);
+		Mockito.when(farmService.getAll()).thenReturn(farms);
 		
 		ResponseEntity<String> response = restTemplate.getForEntity("/api/v1/farms", String.class);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.NO_CONTENT);
@@ -85,7 +84,7 @@ public class FarmControllerTest {
 		
 		farms.add(farm);
 		
-		Mockito.when(farmRepo.findAll()).thenReturn(farms);
+		Mockito.when(farmService.getAll()).thenReturn(farms);
 		
 		ResponseEntity<String> response = restTemplate.getForEntity("/api/v1/farms", String.class);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -95,7 +94,7 @@ public class FarmControllerTest {
 	public void naoDeveriaRetornarFazendaQuandoOIdForInvalido() {	
 		String id = "1";
 		
-		Mockito.when(farmRepo.findById(id)).thenReturn(null);
+		Mockito.when(farmService.getById(id)).thenReturn(null);
 		
 		ResponseEntity<String> response = restTemplate.getForEntity("/api/v1/farms/{id}", String.class, id);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
@@ -105,7 +104,7 @@ public class FarmControllerTest {
 	public void deveriaRetornarUmaFazendaQuandoOIdForValido() {	
 		Farm farm = new Farm("1", "Test Farm");
 		
-		Mockito.when(farmRepo.findById(farm.getId())).thenReturn(Optional.of(farm));
+		Mockito.when(farmService.getById(farm.getId())).thenReturn(farm);
 		
 		ResponseEntity<String> response = restTemplate.getForEntity("/api/v1/farms/{id}", String.class, farm.getId());
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);

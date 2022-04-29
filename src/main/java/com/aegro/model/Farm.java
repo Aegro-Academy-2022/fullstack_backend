@@ -1,9 +1,11 @@
 package com.aegro.model;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Document(collection="Farm")
@@ -39,5 +41,13 @@ public class Farm {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	@JsonIgnore
+	public boolean isNull() {
+		if(this.name == null && this.id ==null) {
+			return true;
+		}
+		return false;
 	}
 }
