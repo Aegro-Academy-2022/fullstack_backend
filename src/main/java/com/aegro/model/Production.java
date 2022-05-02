@@ -7,6 +7,8 @@ import javax.persistence.Id;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Document(collection="Production")
 public class Production {
@@ -54,4 +56,12 @@ public class Production {
 		this.fkPlot = fkPlot;
 	}
 	
+	@JsonIgnore
+	public boolean isNull() {
+		if(this.kilo == null && this.id ==null) {
+			return true;
+		}
+		return false;
+	}
+
 }

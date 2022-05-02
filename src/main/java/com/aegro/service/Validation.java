@@ -14,7 +14,7 @@ public class Validation {
 		return false;
 	}
 	
-	public boolean verifyArea(BigDecimal area) {
+	public boolean verifyNum(BigDecimal area) {
 		if(area.compareTo(BigDecimal.ZERO) == 0) {
 			return true;
 		}

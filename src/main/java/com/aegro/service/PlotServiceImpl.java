@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.aegro.model.Farm;
 import com.aegro.model.Plot;
 import com.aegro.repository.PlotRepository;
 
@@ -22,7 +21,7 @@ public class PlotServiceImpl implements PlotService{
 	public Plot insert(Plot plot, String fkFarm) {
 		try {
 			if(validation.verifyName(plot.getName())
-					|| validation.verifyArea(plot.getArea())) {
+					|| validation.verifyNum(plot.getArea())) {
 				return new Plot();
 			}
 
@@ -54,7 +53,7 @@ public class PlotServiceImpl implements PlotService{
 	public Plot update(String fkFarm, String id, Plot plot) {
 		try {
 			if(validation.verifyName(plot.getName())
-					|| validation.verifyArea(plot.getArea())) {
+					|| validation.verifyNum(plot.getArea())) {
 				return new Plot();
 			}
 			

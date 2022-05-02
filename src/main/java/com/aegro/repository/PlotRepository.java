@@ -1,6 +1,5 @@
 package com.aegro.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,9 @@ public class PlotRepository{
 	
 	@Autowired
 	MongoTemplate mongoTemplate;
+	
+	@Autowired
+	ProductionRepository productionRepo;
 
 	public Plot save(Plot plot, String fkFarm) {
 		return mongoTemplate.save(new Plot(plot.getName(), plot.getArea(), fkFarm));
@@ -49,7 +51,7 @@ public class PlotRepository{
 	
 	public DeleteResult delete(String fkFarm, String id) {
 		Plot plot = findById(fkFarm, id);
-		if(plot.isNull()) {
+		if(plot.isNull() || !productionRepo.deleteAll(plot.getId()).isEmpty()) {
 			return null;
 		}
 		return mongoTemplate.remove(plot);
