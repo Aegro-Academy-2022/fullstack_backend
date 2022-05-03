@@ -1,7 +1,6 @@
 package com.aegro.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,91 +15,67 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aegro.model.Farm;
-import com.aegro.repository.FarmRepository;
+import com.aegro.service.FarmServiceImpl;
 
 @RestController
 @RequestMapping("/api/v1/farms")
 public class FarmController {
+	
 	@Autowired
-	private FarmRepository farmRepo;
+	private FarmServiceImpl farmService;
 
 	@PostMapping
 	public ResponseEntity<Farm> createFarm(@RequestBody Farm farm) {
-		try {
-			if(farm.getName().isBlank() || farm.getName().isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-			}
+		Farm _farm = farmService.insert(farm);
 			
-			Farm _farm = farmRepo.save(new Farm(farm.getName()));
-			
-			return new ResponseEntity<>(_farm, HttpStatus.CREATED);
-		}catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		if(_farm.isNull()) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
+		return new ResponseEntity<>(_farm, HttpStatus.CREATED);
 	}
 	
 	@GetMapping
 	public ResponseEntity<List<Farm>> getAllFarms() {
-		try {
-			List<Farm> farms = farmRepo.findAll();
-			
-			if (farms.isEmpty()) {
-				return new ResponseEntity<>(farms, HttpStatus.NO_CONTENT);
-			}
-			
-			return new ResponseEntity<>(farms, HttpStatus.OK);
-			
-		}catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		List<Farm> farms = farmService.getAll();
+		
+		if (farms.isEmpty()) {
+			return new ResponseEntity<>(farms, HttpStatus.NO_CONTENT);
 		}
+		
+		return new ResponseEntity<>(farms, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Optional<Farm>> getFarm(@PathVariable("id") String id){
-		try {
-			Optional<Farm> _farm = farmRepo.findById(id);
-			
-			if(_farm == null) {
-				return new ResponseEntity<>(_farm, HttpStatus.NOT_FOUND);
-			}
-			
-			return new ResponseEntity<>(_farm, HttpStatus.OK);
-			
-		}catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<Farm> getFarm(@PathVariable("id") String id){
+		Farm farm = farmService.getById(id);
+		
+		if(farm.isNull()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+		
+		return new ResponseEntity<>(farm, HttpStatus.OK);
 	}
 	
 	@PutMapping("/{id}") 
 	public ResponseEntity<Farm> updateFarm(@PathVariable("id") String id, @RequestBody Farm farm) {
-		try {
-			if(farm.getName().isBlank() || farm.getName().isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-			}
-			
-			Farm _farm = farmRepo.findById(id).get();
-			
-			_farm.setName(farm.getName());
-			farmRepo.save(_farm);
-			
-			return new ResponseEntity<>(_farm, HttpStatus.OK);
-			
-		}catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		Farm _farm = farmService.update(id, farm);
+		
+		if(_farm.isNull()) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
+		return new ResponseEntity<>(_farm, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Farm> deleteFarm(@PathVariable("id") String id){
-		try {
-			farmRepo.deleteById(id);
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			
-		} catch(Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		boolean response = farmService.remove(id);
+		
+		if(response) {
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
-			
+		
+		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
