@@ -25,13 +25,10 @@ public class Productivity {
 	@Autowired
 	private Validation validation;
 	
-	public boolean setProductivity(String fkFarm, String fkPlot) {
+	public boolean defineProductivityPlot(String fkFarm, String fkPlot) {
 		try {
 			BigDecimal productivityPlot = getProductivityPlot(fkFarm, fkPlot);
 			plotRepo.updateProductivity(fkFarm, fkPlot, productivityPlot);
-			
-			BigDecimal productivityFarm = getProductivityFarm(fkFarm);
-			farmRepo.updateProductivity(fkFarm, productivityFarm);
 			
 			return true;		
 			
@@ -39,6 +36,18 @@ public class Productivity {
 			return false;
 		}
 		
+	}
+	
+	public boolean defineProductivityFarm (String fkFarm) {
+		try {
+			BigDecimal productivityFarm = getProductivityFarm(fkFarm);
+			farmRepo.updateProductivity(fkFarm, productivityFarm);
+			
+			return true;
+			
+		}catch(Exception e) {
+			return false;
+		}
 	}
 	
 	public BigDecimal getProductivityFarm(String idFarm) {

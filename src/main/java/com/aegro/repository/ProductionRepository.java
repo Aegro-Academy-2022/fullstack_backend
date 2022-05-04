@@ -55,14 +55,6 @@ public class ProductionRepository{
 	}
 	
 	public void deleteAll(String fkPlot) {
-		/*Query query = new Query(Criteria.where("fkPlot").is(fkPlot));
-		List<Production> productions = mongoTemplate.findAllAndRemove(query, Production.class);
-		
-		if(productions.isEmpty()) {
-			return null;
-		}
-		
-		return productions;*/
 		findAll(fkPlot).forEach( (production) -> delete(production.getFkPlot(), production.getId()));
 	}
 	

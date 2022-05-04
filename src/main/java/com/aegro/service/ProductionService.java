@@ -13,6 +13,6 @@ public interface ProductionService {
 	
 	Production update(String fkPlot, String id, Production production);
 	
-	boolean remove(String fkPlot, String id);
+	boolean remove(String fkFarm, String fkPlot, String id);
 
 }

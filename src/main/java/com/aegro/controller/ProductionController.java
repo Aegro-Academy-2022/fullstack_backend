@@ -68,8 +68,8 @@ public class ProductionController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Production> deleteProduction(@PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id){
-		boolean response = productionService.remove(fkPlot, id);
+	public ResponseEntity<Production> deleteProduction(@PathVariable("fkFarm") String fkFarm,@PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id){
+		boolean response = productionService.remove(fkFarm, fkPlot, id);
 		
 		if(response) {
 			return new ResponseEntity<>(HttpStatus.OK);

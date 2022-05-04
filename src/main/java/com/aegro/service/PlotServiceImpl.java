@@ -17,6 +17,9 @@ public class PlotServiceImpl implements PlotService{
 	@Autowired
 	private Validation validation;
 	
+	@Autowired
+	private Productivity productivity;
+	
 	@Override
 	public Plot insert(Plot plot, String fkFarm) {
 		try {
@@ -67,7 +70,11 @@ public class PlotServiceImpl implements PlotService{
 	public boolean remove(String fkFarm, String id) {
 		try {
 			plotRepo.delete(fkFarm, id);
-			return true;
+			
+			if(productivity.defineProductivityFarm(fkFarm)) {
+				return true;
+			}
+			return false;
 		}catch(Exception e) {
 			return false;
 		}

@@ -29,7 +29,7 @@ public class ProductionServiceImpl implements ProductionService{
 
 			Production _production =productionRepo.save(production, fkPlot);
 			
-			if(productivity.setProductivity(fkFarm, fkPlot)) {
+			if(productivity.defineProductivityPlot(fkFarm, fkPlot) && productivity.defineProductivityFarm(fkFarm)) {
 				return _production;
 			}
 			
@@ -71,10 +71,15 @@ public class ProductionServiceImpl implements ProductionService{
 	}
 
 	@Override
-	public boolean remove(String fkPlot, String id) {
+	public boolean remove(String fkFarm, String fkPlot, String id) {
 		try {
 			productionRepo.delete(fkPlot, id);
-			return true;
+			
+			if(productivity.defineProductivityPlot(fkFarm, fkPlot) && productivity.defineProductivityFarm(fkFarm)) {
+				return true;
+			}
+			
+			return false;
 		}catch(Exception e) {
 			return false;
 		}
