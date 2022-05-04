@@ -5,7 +5,7 @@ import java.util.List;
 import com.aegro.model.Production;
 
 public interface ProductionService {
-	Production insert(Production production, String fkPlot);
+	Production insert(Production production, String fkPlot, String fkFarm);
 	
 	List<Production> getAll(String fkPlot);
 	

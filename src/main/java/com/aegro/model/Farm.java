@@ -1,5 +1,7 @@
 package com.aegro.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 
 import org.springframework.data.annotation.Id;
@@ -15,14 +17,17 @@ public class Farm {
 	private String id;
 	
 	private String name;
+	private BigDecimal productivity;
 	
 	public Farm(String name) {
 		this.name = name;
+		this.productivity = new BigDecimal(0);
 	}
 	
 	public Farm(String id, String name) {
 		this.id = id;
 		this.name = name;
+		this.productivity = new BigDecimal(0);
 	}
 	
 	public Farm() {}
@@ -41,6 +46,14 @@ public class Farm {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public BigDecimal getProductivity() {
+		return productivity;
+	}
+
+	public void setProductivity(BigDecimal productivity) {
+		this.productivity = productivity;
 	}
 	
 	@JsonIgnore

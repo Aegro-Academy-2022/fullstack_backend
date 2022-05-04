@@ -24,8 +24,8 @@ public class ProductionController {
 	private ProductionServiceImpl productionService;
 	
 	@PostMapping
-	public ResponseEntity<Production> createProduction(@PathVariable("fkPlot") String fkPlot, @RequestBody Production production) {
-		Production _production = productionService.insert(production, fkPlot);
+	public ResponseEntity<Production> createProduction(@PathVariable("fkFarm") String fkFarm, @PathVariable("fkPlot") String fkPlot, @RequestBody Production production) {
+		Production _production = productionService.insert(production, fkPlot, fkFarm);
 		
 		if(_production.isNull()) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

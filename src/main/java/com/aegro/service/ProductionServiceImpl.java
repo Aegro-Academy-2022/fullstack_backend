@@ -16,15 +16,24 @@ public class ProductionServiceImpl implements ProductionService{
 	
 	@Autowired
 	private Validation validation;
+	
+	@Autowired
+	private Productivity productivity;
 
 	@Override
-	public Production insert(Production production, String fkPlot) {
+	public Production insert(Production production, String fkPlot, String fkFarm) {
 		try {
 			if(validation.verifyNum(production.getKilo())) {
 				return new Production();
 			}
 
-			return productionRepo.save(production, fkPlot);
+			Production _production =productionRepo.save(production, fkPlot);
+			
+			if(productivity.setProductivity(fkFarm, fkPlot)) {
+				return _production;
+			}
+			
+			return new Production();
 		}catch(Exception e) {
 			return new Production();
 		}
