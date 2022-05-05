@@ -18,6 +18,7 @@ public class Plot {
 	private String name;
 	private BigDecimal area;
 	private String fkFarm;
+	private BigDecimal productivity;
 	
 	public Plot() {}
 	
@@ -25,6 +26,7 @@ public class Plot {
 		this.name = name;
 		this.area = area;
 		this.fkFarm = fkFarm;
+		this.productivity = new BigDecimal(0);
 	}
 	
 	public Plot(String id, String name, BigDecimal area, String fkFarm) {
@@ -32,6 +34,7 @@ public class Plot {
 		this.name = name;
 		this.area = area;
 		this.fkFarm = fkFarm;
+		this.productivity = new BigDecimal(0);
 	}
 
 	public String getId() {
@@ -64,6 +67,14 @@ public class Plot {
 
 	public void setFkFarm(String fkFarm) {
 		this.fkFarm = fkFarm;
+	}
+	
+	public BigDecimal getProductivity() {
+		return productivity;
+	}
+
+	public void setProductivity(BigDecimal productivity) {
+		this.productivity = productivity;
 	}
 	
 	@JsonIgnore

@@ -1,5 +1,7 @@
 package com.aegro.repository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,22 +51,45 @@ public class PlotRepository{
 		return mongoTemplate.save(plot);
 	}
 	
+	public Plot updateProductivity(String fkFarm, String id, BigDecimal productivity) {
+		Plot plot = findById(fkFarm, id);
+		
+		if(plot.isNull()) {
+			return new Plot();
+		}
+		
+		plot.setProductivity(productivity);
+		return mongoTemplate.save(plot);
+	}
+	
 	public DeleteResult delete(String fkFarm, String id) {
 		Plot plot = findById(fkFarm, id);
-		if(plot.isNull() || !productionRepo.deleteAll(plot.getId()).isEmpty()) {
+		if(plot.isNull()) {
 			return null;
 		}
+		
+		productionRepo.deleteAll(plot.getId());
 		return mongoTemplate.remove(plot);
 	}
 	
-	public List<Plot> deleteAll(String fkFarm) {
-		Query query = new Query(Criteria.where("fkFarm").is(fkFarm));
-		List<Plot> plots = mongoTemplate.findAllAndRemove(query, Plot.class);
-		
-		if(plots.isEmpty()) {
-			return null;
+	public void deleteAll(String fkFarm) {
+		findAll(fkFarm).forEach( (plot) -> delete(plot.getFkFarm(), plot.getId()));
+	}
+	
+	public BigDecimal getProductivity(String fkFarm){
+		BigDecimal productivity = findAll(fkFarm).
+				stream()
+				.map(Plot::getProductivity)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		if (productivity == null) {
+			return new BigDecimal(0);
 		}
 		
-		return plots;
+		BigDecimal size = new BigDecimal(findAll(fkFarm).size());
+		
+		return productivity.divide(size, 2, RoundingMode.HALF_UP);
+ 
 	}
+
 }

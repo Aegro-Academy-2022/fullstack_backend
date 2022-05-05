@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import com.aegro.model.Farm;
 import com.mongodb.client.result.DeleteResult;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +44,24 @@ public class FarmRepository {
 		return mongoTemplate.save(farm);
 	}
 	
-	public DeleteResult delete(String id) {
-		Farm farm = mongoTemplate.findById(id, Farm.class);
-		if(farm.isNull() || !plotRepo.deleteAll(farm.getId()).isEmpty()) {
-			return null;
+	public Farm updateProductivity(String id, BigDecimal productivity) {
+		Farm farm = findById(id);
+		
+		if(farm.isNull()) {
+			return new Farm();
 		}
 		
+		farm.setProductivity(productivity);
+		return mongoTemplate.save(farm);
+	}
+	
+	public DeleteResult delete(String id) {
+		Farm farm = mongoTemplate.findById(id, Farm.class);
+		if(farm.isNull()) {
+			return null;
+		}
+	
+		plotRepo.deleteAll(farm.getId());
 		return mongoTemplate.remove(farm);
 	}
 

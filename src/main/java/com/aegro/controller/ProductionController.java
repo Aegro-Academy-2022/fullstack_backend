@@ -24,8 +24,8 @@ public class ProductionController {
 	private ProductionServiceImpl productionService;
 	
 	@PostMapping
-	public ResponseEntity<Production> createProduction(@PathVariable("fkPlot") String fkPlot, @RequestBody Production production) {
-		Production _production = productionService.insert(production, fkPlot);
+	public ResponseEntity<Production> createProduction(@PathVariable("fkFarm") String fkFarm, @PathVariable("fkPlot") String fkPlot, @RequestBody Production production) {
+		Production _production = productionService.insert(production, fkPlot, fkFarm);
 		
 		if(_production.isNull()) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -68,8 +68,8 @@ public class ProductionController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Production> deleteProduction(@PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id){
-		boolean response = productionService.remove(fkPlot, id);
+	public ResponseEntity<Production> deleteProduction(@PathVariable("fkFarm") String fkFarm,@PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id){
+		boolean response = productionService.remove(fkFarm, fkPlot, id);
 		
 		if(response) {
 			return new ResponseEntity<>(HttpStatus.OK);
