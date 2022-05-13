@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.aegro.model.Plot;
+import com.aegro.model.Production;
 import com.mongodb.client.result.DeleteResult;
 
 @Repository
@@ -76,7 +77,7 @@ public class PlotRepository{
 		findAll(fkFarm).forEach( (plot) -> delete(plot.getFkFarm(), plot.getId()));
 	}
 	
-	public BigDecimal getProductivity(String fkFarm){
+	/*public BigDecimal getProductivity(String fkFarm){
 		BigDecimal productivity = findAll(fkFarm).
 				stream()
 				.map(Plot::getProductivity)
@@ -90,6 +91,28 @@ public class PlotRepository{
 		
 		return productivity.divide(size, 2, RoundingMode.HALF_UP);
  
+	}*/
+	
+	public BigDecimal getTotalArea(String fkFarm) {
+		BigDecimal totalArea = findAll(fkFarm)
+				.stream()
+				.map(Plot::getArea)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		if (totalArea == null) {
+			return new BigDecimal(0);
+		}
+		return totalArea;
+	}
+	
+	public BigDecimal getTotalProduction(String fkFarm) {
+		BigDecimal totalKilo = findAll(fkFarm)
+				.stream()
+				.map((plot) -> productionRepo.getTotalKilo(plot.getId()))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		if (totalKilo == null) {
+			return new BigDecimal(0);
+		}
+		return totalKilo;
 	}
 
 }
