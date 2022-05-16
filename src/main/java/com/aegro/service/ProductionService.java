@@ -11,7 +11,7 @@ public interface ProductionService {
 	
 	Production getById(String fkPlot, String id);
 	
-	Production update(String fkPlot, String id, Production production);
+	Production update(String fkFarm, String fkPlot, String id, Production production);
 	
 	boolean remove(String fkFarm, String fkPlot, String id);
 

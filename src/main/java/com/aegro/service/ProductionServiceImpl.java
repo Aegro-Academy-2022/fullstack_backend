@@ -58,13 +58,19 @@ public class ProductionServiceImpl implements ProductionService{
 	}
 
 	@Override
-	public Production update(String fkPlot, String id, Production production) {
+	public Production update(String fkFarm, String fkPlot, String id, Production production) {
 		try {
 			if(validation.verifyNum(production.getKilo())) {
 				return new Production();
 			}
 			
-			return productionRepo.update(fkPlot,id, production);
+			Production _production = productionRepo.update(fkPlot,id, production);
+			
+			if(productivity.defineProductivityPlot(fkFarm, fkPlot) && productivity.defineProductivityFarm(fkFarm)) {
+				return _production;
+			}
+			
+			return new Production();
 		}catch(Exception e) {
 			return new Production();
 		}

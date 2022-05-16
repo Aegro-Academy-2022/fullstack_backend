@@ -57,8 +57,8 @@ public class ProductionController {
 	}
 	
 	@PutMapping("/{id}") 
-	public ResponseEntity<Production> updateProduction(@PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id, @RequestBody Production production) {
-		Production _production = productionService.update(fkPlot, id, production);
+	public ResponseEntity<Production> updateProduction(@PathVariable("fkFarm") String fkFarm, @PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id, @RequestBody Production production) {
+		Production _production = productionService.update(fkFarm, fkPlot, id, production);
 		
 		if(_production.isNull()) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -43,44 +43,44 @@ public class PlotServiceImplTest {
 	@Before
 	public void setUp() {
 		farm = new Farm("1", "Test Farm");
-		plot = new Plot("2", "Test Plot", new BigDecimal(40), this.farm.getId());
-		plotBlankName = new Plot("2", "  ", new BigDecimal(40), this.farm.getId());
-		plotInvalidArea = new Plot("2", "Test Plot Area", new BigDecimal(0), this.farm.getId());
+		plot = new Plot("2", "Test Plot", new BigDecimal(40), farm.getId());
+		plotBlankName = new Plot("3", "  ", new BigDecimal(40), farm.getId());
+		plotInvalidArea = new Plot("4", "Test Plot Area", new BigDecimal(0), farm.getId());
 	}
 	
 	@Test
 	public void deveriaCriarTalhao() {
-		Mockito.when(plotRepo.save(this.plot, this.farm.getId())).thenReturn(this.plot);
+		Mockito.when(plotRepo.save(plot, farm.getId())).thenReturn(plot);
 		
-		Plot _plot = plotService.insert(this.plot, this.farm.getId());
+		Plot _plot = plotService.insert(plot, farm.getId());
 		
-		Assertions.assertEquals(_plot, this.plot);
+		Assertions.assertEquals(_plot, plot);
 		
 	}
 	
 	@Test
 	public void naoDeveriaCriarTalhaoComNomeInvalido() {
-		Mockito.when(plotRepo.save(this.plotBlankName, this.farm.getId())).thenReturn(new Plot());
+		Mockito.when(plotRepo.save(plotBlankName, farm.getId())).thenReturn(new Plot());
 		
-		Plot _plot = plotService.insert(this.plotBlankName, this.farm.getId());
+		Plot _plot = plotService.insert(plotBlankName, farm.getId());
 		
 		Assertions.assertTrue(_plot.isNull());
 	}
 	
 	@Test
 	public void naoDeveriaCriarTalhaoComAreaIncalida() {
-		Mockito.when(plotRepo.save(this.plotInvalidArea, this.farm.getId())).thenReturn(new Plot());
+		Mockito.when(plotRepo.save(plotInvalidArea, farm.getId())).thenReturn(new Plot());
 		
-		Plot _plot = plotService.insert(this.plotInvalidArea, this.farm.getId());
+		Plot _plot = plotService.insert(plotInvalidArea, farm.getId());
 		
 		Assertions.assertTrue(_plot.isNull());
 	}
 	
 	@Test
 	public void gerarExcecaoQuandoTentarInserirTalhaInvalido() {
-		Mockito.when(plotRepo.save(null, this.farm.getId())).thenThrow(new RuntimeException());
+		Mockito.when(plotRepo.save(null, farm.getId())).thenThrow(new RuntimeException());
 		
-		Plot _plot = plotService.insert(null, this.farm.getId());
+		Plot _plot = plotService.insert(null, farm.getId());
 		
 		Assertions.assertTrue(_plot.isNull());
 	}
@@ -88,58 +88,74 @@ public class PlotServiceImplTest {
 	@Test
 	public void deveriaRetornarListaDeTalhoes() {
 		List<Plot> plots = new ArrayList<>();
-		plots.add(this.plot);
+		plots.add(plot);
 		
-		Mockito.when(plotRepo.findAll(this.farm.getId())).thenReturn(plots);
+		Mockito.when(plotRepo.findAll(farm.getId())).thenReturn(plots);
 		
-		List<Plot> _plots = plotService.getAll(this.farm.getId());
+		List<Plot> _plots = plotService.getAll(farm.getId());
 		
 		Assertions.assertFalse(_plots.isEmpty());
 	}
 	
 	@Test
 	public void gerarExcecaoAoRetornarListaDeTalhoes() {
-		Mockito.when(plotRepo.findAll(this.farm.getId())).thenThrow(new RuntimeException());
+		Mockito.when(plotRepo.findAll(farm.getId())).thenThrow(new RuntimeException());
 		
-		List<Plot> plots = plotService.getAll(this.farm.getId());
+		List<Plot> plots = plotService.getAll(farm.getId());
 		
 		Assertions.assertTrue(plots.isEmpty());
 	}
 	
 	@Test
 	public void deveriaRetornarTalhaoComIdValido() {
-		Mockito.when(plotRepo.findById(this.farm.getId(), this.plot.getId())).thenReturn(this.plot);
+		Mockito.when(plotRepo.findById(farm.getId(), plot.getId())).thenReturn(plot);
 		
-		Plot _plot = plotService.getById(this.farm.getId(), this.plot.getId());
+		Plot _plot = plotService.getById(farm.getId(), plot.getId());
 		
-		Assertions.assertEquals(_plot, this.plot);
+		Assertions.assertEquals(_plot, plot);
 	}
 	
 	@Test
 	public void gerarExececaoQuandoIdTalhaoForInvalido() {
-		Mockito.when(plotRepo.findById(this.farm.getId(), null)).thenThrow(new RuntimeException());
+		Mockito.when(plotRepo.findById(farm.getId(), null)).thenThrow(new RuntimeException());
 		
-		Plot _plot = plotService.getById(this.farm.getId(), null);
+		Plot _plot = plotService.getById(farm.getId(), null);
 		
 		Assertions.assertTrue(_plot.isNull());
 	}
 	
 	@Test
 	public void deveriaAtualizarDadosDeTalhao() {
-		this.plot.setName("Test Plot Updated");
+		plot.setName("Test Plot Updated");
 		
-		Mockito.when(plotRepo.update(this.farm.getId(), this.plot.getId(), this.plot)).thenReturn(this.plot);
+		Mockito.when(plotRepo.update(farm.getId(), plot.getId(), plot)).thenReturn(plot);
+		Mockito.when(productivity.defineProductivityFarm(farm.getId())).thenReturn(true);
+		Mockito.when(productivity.defineProductivityPlot(farm.getId(), plot.getId())).thenReturn(true);
+
 		
-		Plot _plot = plotService.update(this.farm.getId(), this.plot.getId(), this.plot);
+		Plot _plot = plotService.update(farm.getId(), plot.getId(), plot);
 		
-		Assertions.assertEquals(_plot, this.plot);
+		Assertions.assertEquals(_plot.getId(), plot.getId());
+	}
+	
+	@Test
+	public void naodeveriaAtualizarDadosDeTalhao() {
+		plot.setName("Test Plot Updated");
+		
+		Mockito.when(plotRepo.update(farm.getId(), plot.getId(), plot)).thenReturn(new Plot());
+		Mockito.when(productivity.defineProductivityFarm(null)).thenReturn(false);
+		Mockito.when(productivity.defineProductivityPlot(null, plot.getId())).thenReturn(false);
+		
+		Plot _plot = plotService.update(farm.getId(), plot.getId(), plot);
+		
+		Assertions.assertTrue(_plot.isNull());
 	}
 	
 	@Test
 	public void naoDeveriaAtualizarTalhaoComNomeInvalido() {
-		Mockito.when(plotRepo.update(this.farm.getId(), this.plotBlankName.getId(), this.plotBlankName)).thenReturn(new Plot());
+		Mockito.when(plotRepo.update(farm.getId(), plotBlankName.getId(), plotBlankName)).thenReturn(new Plot());
 		
-		Plot _plot = plotService.update(this.farm.getId(), this.plotBlankName.getId(), this.plotBlankName);
+		Plot _plot = plotService.update(farm.getId(), plotBlankName.getId(), plotBlankName);
 		
 		Assertions.assertTrue(_plot.isNull());
 		
@@ -147,48 +163,49 @@ public class PlotServiceImplTest {
 	
 	@Test
 	public void naoDeveriaAtualizarTalhaoComAreaInvalida() {
-		Mockito.when(plotRepo.update(this.farm.getId(), this.plotInvalidArea.getId(), this.plotInvalidArea)).thenReturn(new Plot());
+		Mockito.when(plotRepo.update(farm.getId(), plotInvalidArea.getId(), plotInvalidArea)).thenReturn(new Plot());
 		
-		Plot _plot = plotService.update(this.farm.getId(), this.plotInvalidArea.getId(), this.plotInvalidArea);
+		Plot _plot = plotService.update(farm.getId(), plotInvalidArea.getId(), plotInvalidArea);
 		
 		Assertions.assertTrue(_plot.isNull());
 	}
 	
+	
 	@Test
 	public void gerarExcecaoQuandoDadosDoTalhaoForemInvalidos() {
-		this.plot.setName("Test Plot Updated");
+		plot.setName("Test Plot Updated");
 
-		Mockito.when(plotRepo.update(this.farm.getId(), null, this.plot)).thenThrow( new RuntimeException());
+		Mockito.when(plotRepo.update(farm.getId(), null, plot)).thenThrow( new RuntimeException());
 		
-		Plot _plot = plotService.update(this.farm.getId(), null, this.plot);
+		Plot _plot = plotService.update(farm.getId(), null, plot);
 		
 		Assertions.assertTrue(_plot.isNull());
 	}
 	
 	@Test
 	public void deveriaRemoverTalhaoComIdValido() {
-		Mockito.when(plotRepo.delete(this.farm.getId(), this.plot.getId())).thenReturn(null);
-		Mockito.when(productivity.defineProductivityFarm(this.farm.getId())).thenReturn(true);
+		Mockito.when(plotRepo.delete(farm.getId(), plot.getId())).thenReturn(null);
+		Mockito.when(productivity.defineProductivityFarm(farm.getId())).thenReturn(true);
 		
-		boolean _plot = plotService.remove(this.farm.getId(), this.plot.getId());
+		boolean _plot = plotService.remove(farm.getId(), plot.getId());
 		
 		Assertions.assertTrue(_plot);
 	}
 	
 	@Test
 	public void naodeveriaRemoverTalhaoComIdInvalido() {
-		Mockito.when(plotRepo.delete(this.farm.getId(), null)).thenReturn(null);
+		Mockito.when(plotRepo.delete(farm.getId(), null)).thenReturn(null);
 		
-		boolean _plot = plotService.remove(this.farm.getId(), null);
+		boolean _plot = plotService.remove(farm.getId(), null);
 		
 		Assertions.assertFalse(_plot);
 	}
 	
 	@Test
 	public void gerarExcecaoQuandoTentarRemoverTalhaoComIdInvalido() {
-		Mockito.when(plotRepo.delete(this.farm.getId(), null)).thenThrow(new RuntimeException());
+		Mockito.when(plotRepo.delete(farm.getId(), null)).thenThrow(new RuntimeException());
 		
-		boolean _plot = plotService.remove(this.farm.getId(), null);
+		boolean _plot = plotService.remove(farm.getId(), null);
 		
 		Assertions.assertFalse(_plot);
 		

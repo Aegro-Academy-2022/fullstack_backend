@@ -44,12 +44,17 @@ public class PlotRepository{
 	}
 	
 	public Plot update(String fkFarm, String id, Plot plot) {
-		if(findById(fkFarm, id).isNull()) {
+		Plot _plot = findById(fkFarm, id);
+		
+		
+		if(_plot.isNull()) {
 			return new Plot();
 		}
-		plot.setId(id);
-		plot.setFkFarm(fkFarm);
-		return mongoTemplate.save(plot);
+
+		_plot.setName(plot.getName());
+		_plot.setArea(plot.getArea());
+
+		return mongoTemplate.save(_plot);
 	}
 	
 	public Plot updateProductivity(String fkFarm, String id, BigDecimal productivity) {

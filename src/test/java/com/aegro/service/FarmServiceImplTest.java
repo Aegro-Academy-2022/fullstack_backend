@@ -43,27 +43,27 @@ public class FarmServiceImplTest {
 	
 	@Test
 	public void deveriaInserirFazenda() {
-		Mockito.when(farmRepo.save(this.farm)).thenReturn(this.farm);
+		Mockito.when(farmRepo.save(farm)).thenReturn(farm);
 		
-		Farm _farm = farmService.insert(this.farm);
+		Farm _farm = farmService.insert(farm);
 		
 		Assertions.assertEquals(_farm, farm);
 	}
 	
 	@Test
 	public void naoDeveriaInserirFazendaComNomeVazio() {
-		Mockito.when(farmRepo.save(this.farmEmpty)).thenReturn(new Farm());
+		Mockito.when(farmRepo.save(farmEmpty)).thenReturn(new Farm());
 		
-		Farm _farm = farmService.insert(this.farmEmpty);
+		Farm _farm = farmService.insert(farmEmpty);
 		
 		Assertions.assertTrue(_farm.isNull());
 	}
 	
 	@Test
 	public void naoDeveriaInserirFazendaComNomeEmBranco() {
-		Mockito.when(farmRepo.save(this.farmBlank)).thenReturn(new Farm());
+		Mockito.when(farmRepo.save(farmBlank)).thenReturn(new Farm());
 		
-		Farm _farm = farmService.insert(this.farmBlank);
+		Farm _farm = farmService.insert(farmBlank);
 		
 		Assertions.assertTrue(_farm.isNull());
 	}
@@ -80,7 +80,7 @@ public class FarmServiceImplTest {
 	@Test 
 	public void deveriaRetornaListaComFazenda() {
 		List<Farm> farmList = new ArrayList<>();
-		farmList.add(this.farm);
+		farmList.add(farm);
 		
 		Mockito.when(farmRepo.findAll()).thenReturn(farmList);
 		
@@ -100,11 +100,11 @@ public class FarmServiceImplTest {
 	
 	@Test
 	public void deveriaRetornaFazendaQuandoOIdValido() {
-		Mockito.when(farmRepo.findById(this.farm.getId())).thenReturn(farm);
+		Mockito.when(farmRepo.findById(farm.getId())).thenReturn(farm);
 		
-		Farm _farm = farmService.getById(this.farm.getId());
+		Farm _farm = farmService.getById(farm.getId());
 		
-		Assertions.assertEquals(_farm, this.farm);
+		Assertions.assertEquals(_farm, farm);
 	}
 	
 	@Test
@@ -118,11 +118,11 @@ public class FarmServiceImplTest {
 	
 	@Test
 	public void deveriaAtulaizarDadosDaFazenda() {
-		Farm farmAux = new Farm(this.farm.getId(), "Test Farm 2");
+		Farm farmAux = new Farm(farm.getId(), "Test Farm 2");
 		
-		Mockito.when(farmRepo.update(this.farm.getId(), farmAux)).thenReturn(farmAux);
+		Mockito.when(farmRepo.update(farm.getId(), farmAux)).thenReturn(farmAux);
 		
-		Farm _farm = farmService.update(this.farm.getId(), farmAux);
+		Farm _farm = farmService.update(farm.getId(), farmAux);
 		
 		Assertions.assertEquals(_farm, farmAux);
 		
@@ -130,9 +130,9 @@ public class FarmServiceImplTest {
 	
 	@Test
 	public void naodeveriaAtulaizarDadosDaFazendaQuandoNomeForVazio() {		
-		Mockito.when(farmRepo.update(this.farm.getId(), this.farmEmpty)).thenReturn(new Farm());
+		Mockito.when(farmRepo.update(farm.getId(), farmEmpty)).thenReturn(new Farm());
 		
-		Farm _farm = farmService.update(this.farm.getId(), this.farmEmpty);
+		Farm _farm = farmService.update(farm.getId(), farmEmpty);
 		
 		Assertions.assertTrue(_farm.isNull());
 		
@@ -140,9 +140,9 @@ public class FarmServiceImplTest {
 	
 	@Test
 	public void naodeveriaAtulaizarDadosDaFazendaQuandoNomeEstiverEmBranco() {
-		Mockito.when(farmRepo.update(this.farm.getId(), this.farmBlank)).thenReturn(new Farm());
+		Mockito.when(farmRepo.update(farm.getId(), farmBlank)).thenReturn(new Farm());
 		
-		Farm _farm = farmService.update(this.farm.getId(), this.farmBlank);
+		Farm _farm = farmService.update(farm.getId(), farmBlank);
 		
 		Assertions.assertTrue(_farm.isNull());
 		
@@ -150,7 +150,7 @@ public class FarmServiceImplTest {
 	
 	@Test
 	public void gerarExcecaoQuandoAtualizarFazendaComIdInvalido() {
-		Farm farmAux = new Farm(this.farm.getId(), "Test Farm 2");
+		Farm farmAux = new Farm(farm.getId(), "Test Farm 2");
 
 		Mockito.when(farmRepo.update(null, farmAux)).thenThrow(new RuntimeException());
 		
@@ -161,9 +161,9 @@ public class FarmServiceImplTest {
 	
 	@Test
 	public void deveiaRemoverFazendaComIdValido() {
-		Mockito.when(farmRepo.delete(this.farm.getId())).thenReturn(null);
+		Mockito.when(farmRepo.delete(farm.getId())).thenReturn(null);
 		
-		boolean _farm = farmService.remove(this.farm.getId());
+		boolean _farm = farmService.remove(farm.getId());
 		
 		Assertions.assertTrue(_farm);
 		

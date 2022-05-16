@@ -60,7 +60,15 @@ public class PlotServiceImpl implements PlotService{
 				return new Plot();
 			}
 			
-			return plotRepo.update(fkFarm,id, plot);
+			Plot _plot = plotRepo.update(fkFarm, id, plot);
+			
+			System.out.println(_plot.getId());
+			
+			if(productivity.defineProductivityPlot(fkFarm, id) && productivity.defineProductivityFarm(fkFarm)) {
+				return _plot;
+			}
+			
+			return new Plot();
 		}catch(Exception e) {
 			return new Plot();
 		}
