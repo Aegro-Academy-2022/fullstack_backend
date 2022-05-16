@@ -129,12 +129,10 @@ public class FarmServiceImplTest {
 	}
 	
 	@Test
-	public void naodeveriaAtulaizarDadosDaFazendaQuandoNomeForVazio() {
-		Farm farmAux = new Farm("");
+	public void naodeveriaAtulaizarDadosDaFazendaQuandoNomeForVazio() {		
+		Mockito.when(farmRepo.update(this.farm.getId(), this.farmEmpty)).thenReturn(new Farm());
 		
-		Mockito.when(farmRepo.update(this.farm.getId(), farmAux)).thenReturn(new Farm());
-		
-		Farm _farm = farmService.update(this.farm.getId(), farmAux);
+		Farm _farm = farmService.update(this.farm.getId(), this.farmEmpty);
 		
 		Assertions.assertTrue(_farm.isNull());
 		
@@ -142,11 +140,9 @@ public class FarmServiceImplTest {
 	
 	@Test
 	public void naodeveriaAtulaizarDadosDaFazendaQuandoNomeEstiverEmBranco() {
-		Farm farmAux = new Farm("  ");
+		Mockito.when(farmRepo.update(this.farm.getId(), this.farmBlank)).thenReturn(new Farm());
 		
-		Mockito.when(farmRepo.update(this.farm.getId(), farmAux)).thenReturn(new Farm());
-		
-		Farm _farm = farmService.update(this.farm.getId(), farmAux);
+		Farm _farm = farmService.update(this.farm.getId(), this.farmBlank);
 		
 		Assertions.assertTrue(_farm.isNull());
 		
@@ -174,7 +170,7 @@ public class FarmServiceImplTest {
 	}
 	
 	@Test
-	public void gerarExcecaoQuandoRemoverFazendaComIdInvalido() {
+	public void gerarExcecaoQuandoTentarRemoverFazendaComIdInvalido() {
 		Mockito.when(farmRepo.delete(null)).thenThrow(new RuntimeException());
 		
 		boolean _farm = farmService.remove(null);
