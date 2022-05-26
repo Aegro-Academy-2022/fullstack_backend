@@ -17,9 +17,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.aegro.model.Farm;
 import com.aegro.model.Plot;
-import com.aegro.repository.FarmRepository;
-import com.aegro.repository.PlotRepository;
-import com.aegro.repository.ProductionRepository;
+import com.aegro.repository.FarmRepositoryImpl;
+import com.aegro.repository.PlotRepositoryImpl;
+import com.aegro.repository.ProductionRepositoryImpl;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -27,13 +27,13 @@ import com.aegro.repository.ProductionRepository;
 public class ProductivityTest {
 	
 	@MockBean
-	FarmRepository farmRepo;
+	FarmRepositoryImpl farmRepo;
 	
 	@MockBean
-	PlotRepository plotRepo;
+	PlotRepositoryImpl plotRepo;
 	
 	@MockBean
-	ProductionRepository productionRepo;
+	ProductionRepositoryImpl productionRepo;
 	
 	@Autowired
 	private Productivity productivity;

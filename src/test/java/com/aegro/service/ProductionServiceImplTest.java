@@ -18,14 +18,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.aegro.model.Farm;
 import com.aegro.model.Plot;
 import com.aegro.model.Production;
-import com.aegro.repository.ProductionRepository;
+import com.aegro.repository.ProductionRepositoryImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProductionServiceImplTest {
 	
 	@MockBean
-	private ProductionRepository productionRepo;
+	private ProductionRepositoryImpl productionRepo;
 		
 	@MockBean
 	private Productivity productivity;

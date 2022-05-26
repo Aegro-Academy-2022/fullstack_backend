@@ -29,7 +29,7 @@ public class ProductionController {
 	public ResponseEntity<Production> createProduction(@PathVariable("fkFarm") String fkFarm, @PathVariable("fkPlot") String fkPlot, @RequestBody Production production) {
 		Production _production = productionService.insert(production, fkPlot, fkFarm);
 		
-		if(_production.isNull()) {
+		if(_production.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -51,7 +51,7 @@ public class ProductionController {
 	public ResponseEntity<Production> getProduction(@PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id){
 		Production production = productionService.getById(fkPlot, id);
 		
-		if(production.isNull()) {
+		if(production.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		
@@ -62,7 +62,7 @@ public class ProductionController {
 	public ResponseEntity<Production> updateProduction(@PathVariable("fkFarm") String fkFarm, @PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id, @RequestBody Production production) {
 		Production _production = productionService.update(fkFarm, fkPlot, id, production);
 		
-		if(_production.isNull()) {
+		if(_production.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		

@@ -30,7 +30,7 @@ public class FarmController {
 	public ResponseEntity<Farm> createFarm(@RequestBody Farm farm) {
 		Farm _farm = farmService.insert(farm);
 			
-		if(_farm.isNull()) {
+		if(_farm.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -52,7 +52,7 @@ public class FarmController {
 	public ResponseEntity<Farm> getFarm(@PathVariable("id") String id){
 		Farm farm = farmService.getById(id);
 		
-		if(farm.isNull()) {
+		if(farm.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		
@@ -63,7 +63,7 @@ public class FarmController {
 	public ResponseEntity<Farm> updateFarm(@PathVariable("id") String id, @RequestBody Farm farm) {
 		Farm _farm = farmService.update(id, farm);
 		
-		if(_farm.isNull()) {
+		if(_farm.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		

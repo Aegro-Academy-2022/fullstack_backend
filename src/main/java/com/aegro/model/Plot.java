@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -78,11 +79,8 @@ public class Plot {
 	}
 	
 	@JsonIgnore
-	public boolean isNull() {
-		if(this.name == null && this.id ==null) {
-			return true;
-		}
-		return false;
+	public boolean isEmpty() {
+		return ObjectUtils.isEmpty(this);
 	}
 
 }

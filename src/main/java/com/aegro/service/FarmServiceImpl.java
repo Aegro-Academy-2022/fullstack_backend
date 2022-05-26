@@ -2,18 +2,19 @@ package com.aegro.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aegro.model.Farm;
-import com.aegro.repository.FarmRepository;
+import com.aegro.repository.FarmRepositoryImpl;
 
 @Service
 public class FarmServiceImpl implements FarmService {
 	
 	@Autowired
-	private FarmRepository farmRepo;
+	private FarmRepositoryImpl farmRepo;
 	
 	@Autowired
 	private Validation validation;

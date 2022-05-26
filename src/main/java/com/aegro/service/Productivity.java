@@ -7,20 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aegro.model.Plot;
-import com.aegro.repository.FarmRepository;
-import com.aegro.repository.PlotRepository;
-import com.aegro.repository.ProductionRepository;
+import com.aegro.repository.FarmRepositoryImpl;
+import com.aegro.repository.PlotRepositoryImpl;
+import com.aegro.repository.ProductionRepositoryImpl;
 
 @Service
 public class Productivity {
 	@Autowired
-	FarmRepository farmRepo;
+	FarmRepositoryImpl farmRepo;
 	
 	@Autowired
-	PlotRepository plotRepo;
+	PlotRepositoryImpl plotRepo;
 	
 	@Autowired
-	ProductionRepository productionRepo;
+	ProductionRepositoryImpl productionRepo;
 		
 	@Autowired
 	private Validation validation;
@@ -51,7 +51,7 @@ public class Productivity {
 	}
 	
 	public BigDecimal getProductivityFarm(String idFarm) {
-		BigDecimal totalKilo = plotRepo.getTotalProduction(idFarm);
+		BigDecimal totalKilo = productionRepo.getTotalProduction(idFarm);
 		BigDecimal totalArea = plotRepo.getTotalArea(idFarm);
 		
 		if (validation.verifyNum(totalKilo) || validation.verifyNum(totalArea)) {
@@ -69,7 +69,7 @@ public class Productivity {
 			return new BigDecimal(0);
 		}
 		Plot plot = plotRepo.findById(fkFarm, idPlot);
-		if(plot.isNull()) {
+		if(plot.isEmpty()) {
 			return null;
 		}
 		return totalKilo.divide(plot.getArea(), 2, RoundingMode.HALF_UP);	

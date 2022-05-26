@@ -29,7 +29,7 @@ public class PlotController {
 	public ResponseEntity<Plot> createPlot(@PathVariable("fk") String fk, @RequestBody Plot plot) {
 		Plot _plot = plotService.insert(plot, fk);
 		
-		if(_plot.isNull()) {
+		if(_plot.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -51,7 +51,7 @@ public class PlotController {
 	public ResponseEntity<Plot> getPlot(@PathVariable("fk") String fk, @PathVariable("id") String id){
 		Plot plot = plotService.getById(fk, id);
 		
-		if(plot.isNull()) {
+		if(plot.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		
@@ -62,7 +62,7 @@ public class PlotController {
 	public ResponseEntity<Plot> updatePlot(@PathVariable("fk") String fk, @PathVariable("id") String id, @RequestBody Plot plot) {
 		Plot _plot = plotService.update(fk, id, plot);
 		
-		if(_plot.isNull()) {
+		if(_plot.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		

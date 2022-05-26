@@ -1,69 +1,23 @@
 package com.aegro.repository;
 
-import org.springframework.stereotype.Repository;
+import java.math.BigDecimal;
+import java.util.List;
 
 import com.aegro.model.Farm;
 import com.mongodb.client.result.DeleteResult;
 
-import java.math.BigDecimal;
-import java.util.List;
+public interface FarmRepository {
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
+	public Farm save(Farm farm);
+	
+	public List<Farm> findAll();
+	
+	public Farm findById(String id);
+	
+	public Farm update(String id, Farm farm);
+	
+	public Farm updateProductivity(String id, BigDecimal productivity);
+	
+	public DeleteResult delete(String id);
 
-@Repository
-public class FarmRepository {
-	
-	@Autowired
-	MongoTemplate mongoTemplate;
-	
-	@Autowired
-	PlotRepository plotRepo;
-
-	public Farm save(Farm farm) {
-		return mongoTemplate.save(new Farm(farm.getName()));
-	}
-	
-	public List<Farm> findAll(){
-		return mongoTemplate.findAll(Farm.class);
-	}
-	
-	public Farm findById(String id) {
-		Farm farm = mongoTemplate.findById(id, Farm.class);
-		if(farm.isNull()) {
-			return null;
-		}
-		return farm;
-	}
-	
-	public Farm update(String id, Farm farm) {
-		if(mongoTemplate.findById(id, Farm.class).isNull()) {
-			return new Farm();
-		}
-		farm.setId(id);
-		return mongoTemplate.save(farm);
-	}
-	
-	public Farm updateProductivity(String id, BigDecimal productivity) {
-		Farm farm = findById(id);
-		
-		if(farm.isNull()) {
-			return new Farm();
-		}
-		
-		farm.setProductivity(productivity);
-		return mongoTemplate.save(farm);
-	}
-	
-	public DeleteResult delete(String id) {
-		Farm farm = mongoTemplate.findById(id, Farm.class);
-		if(farm.isNull()) {
-			return null;
-		}
-	
-		plotRepo.deleteAll(farm.getId());
-		return mongoTemplate.remove(farm);
-	}
-
-	
 }

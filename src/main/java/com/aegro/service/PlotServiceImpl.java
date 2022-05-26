@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aegro.model.Plot;
-import com.aegro.repository.PlotRepository;
+import com.aegro.repository.PlotRepositoryImpl;
 
 @Service
 public class PlotServiceImpl implements PlotService{
 	@Autowired
-	private PlotRepository plotRepo;
+	private PlotRepositoryImpl plotRepo;
 	
 	@Autowired
 	private Validation validation;

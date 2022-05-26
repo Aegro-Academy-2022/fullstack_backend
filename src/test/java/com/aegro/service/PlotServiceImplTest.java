@@ -17,14 +17,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.aegro.model.Farm;
 import com.aegro.model.Plot;
-import com.aegro.repository.PlotRepository;
+import com.aegro.repository.PlotRepositoryImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PlotServiceImplTest {
 
 	@MockBean
-	private PlotRepository plotRepo;
+	private PlotRepositoryImpl plotRepo;
 	
 	@MockBean
 	private Productivity productivity;

@@ -15,14 +15,14 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.aegro.model.Farm;
-import com.aegro.repository.FarmRepository;
+import com.aegro.repository.FarmRepositoryImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FarmServiceImplTest {	
 	
 	@MockBean
-	private FarmRepository farmRepo;
+	private FarmRepositoryImpl farmRepo;
 	
 	@LocalServerPort
 	private int port;

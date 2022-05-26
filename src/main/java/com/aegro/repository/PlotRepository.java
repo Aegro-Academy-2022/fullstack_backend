@@ -1,123 +1,27 @@
 package com.aegro.repository;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Repository;
-
 import com.aegro.model.Plot;
-import com.aegro.model.Production;
 import com.mongodb.client.result.DeleteResult;
 
-@Repository
-public class PlotRepository{
-	
-	@Autowired
-	MongoTemplate mongoTemplate;
-	
-	@Autowired
-	ProductionRepository productionRepo;
+public interface PlotRepository {
 
-	public Plot save(Plot plot, String fkFarm) {
-		return mongoTemplate.save(new Plot(plot.getName(), plot.getArea(), fkFarm));
-	}
+	public Plot save(Plot plot, String fkFarm);
 	
-	public List<Plot> findAll(String fkFarm){
-		List<Plot> allPlots = mongoTemplate.find(new Query().addCriteria(Criteria.where("fkFarm").is(fkFarm)), Plot.class);
-		return allPlots;
-	}
+	public List<Plot> findAll(String fkFarm);
 	
-	public Plot findById(String fkFarm, String id) {
-		Query query = new Query(Criteria.where("id").is(id));
-		List<Plot> plot = mongoTemplate.find(query, Plot.class);
-		
-		if(plot.get(0).isNull() || !plot.get(0).getFkFarm().contentEquals(fkFarm)) {
-			return new Plot();
-		}
-		
-		return plot.get(0);
-	}
+	public Plot findById(String fkFarm, String id);
 	
-	public Plot update(String fkFarm, String id, Plot plot) {
-		Plot _plot = findById(fkFarm, id);
-		
-		
-		if(_plot.isNull()) {
-			return new Plot();
-		}
-
-		_plot.setName(plot.getName());
-		_plot.setArea(plot.getArea());
-
-		return mongoTemplate.save(_plot);
-	}
+	public Plot update(String fkFarm, String id, Plot plot);
 	
-	public Plot updateProductivity(String fkFarm, String id, BigDecimal productivity) {
-		Plot plot = findById(fkFarm, id);
-		
-		if(plot.isNull()) {
-			return new Plot();
-		}
-		
-		plot.setProductivity(productivity);
-		return mongoTemplate.save(plot);
-	}
+	public Plot updateProductivity(String fkFarm, String id, BigDecimal productivity);
 	
-	public DeleteResult delete(String fkFarm, String id) {
-		Plot plot = findById(fkFarm, id);
-		if(plot.isNull()) {
-			return null;
-		}
-		
-		productionRepo.deleteAll(plot.getId());
-		return mongoTemplate.remove(plot);
-	}
+	public DeleteResult delete(String fkFarm, String id);
 	
-	public void deleteAll(String fkFarm) {
-		findAll(fkFarm).forEach( (plot) -> delete(plot.getFkFarm(), plot.getId()));
-	}
+	public void deleteAll(String fkFarm);
 	
-	/*public BigDecimal getProductivity(String fkFarm){
-		BigDecimal productivity = findAll(fkFarm).
-				stream()
-				.map(Plot::getProductivity)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
-
-		if (productivity == null) {
-			return new BigDecimal(0);
-		}
-		
-		BigDecimal size = new BigDecimal(findAll(fkFarm).size());
-		
-		return productivity.divide(size, 2, RoundingMode.HALF_UP);
- 
-	}*/
-	
-	public BigDecimal getTotalArea(String fkFarm) {
-		BigDecimal totalArea = findAll(fkFarm)
-				.stream()
-				.map(Plot::getArea)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
-		if (totalArea == null) {
-			return new BigDecimal(0);
-		}
-		return totalArea;
-	}
-	
-	public BigDecimal getTotalProduction(String fkFarm) {
-		BigDecimal totalKilo = findAll(fkFarm)
-				.stream()
-				.map((plot) -> productionRepo.getTotalKilo(plot.getId()))
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
-		if (totalKilo == null) {
-			return new BigDecimal(0);
-		}
-		return totalKilo;
-	}
+	public BigDecimal getTotalArea(String fkFarm);
 
 }

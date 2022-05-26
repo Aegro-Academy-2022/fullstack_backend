@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aegro.model.Production;
-import com.aegro.repository.ProductionRepository;
+import com.aegro.repository.ProductionRepositoryImpl;
 
 @Service
 public class ProductionServiceImpl implements ProductionService{
 	@Autowired
-	private ProductionRepository productionRepo;
+	private ProductionRepositoryImpl productionRepo;
 	
 	@Autowired
 	private Validation validation;

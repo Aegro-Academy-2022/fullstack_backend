@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -57,10 +58,7 @@ public class Farm {
 	}
 	
 	@JsonIgnore
-	public boolean isNull() {
-		if(this.name == null && this.id ==null) {
-			return true;
-		}
-		return false;
+	public boolean isEmpty() {
+		return ObjectUtils.isEmpty(this);
 	}
 }
