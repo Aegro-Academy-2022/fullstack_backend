@@ -2,7 +2,6 @@ package com.aegro.repository;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,9 +16,6 @@ import com.mongodb.client.result.DeleteResult;
 public class ProductionRepositoryImpl implements ProductionRepository{
 	@Autowired
 	MongoTemplate mongoTemplate;
-	
-	@Autowired
-	PlotRepositoryImpl plotRepo;
 
 	public Production save(Production production, String fkPlot) {
 		return mongoTemplate.save(new Production(production.getKilo(), fkPlot));
@@ -73,19 +69,6 @@ public class ProductionRepositoryImpl implements ProductionRepository{
 		}
 		
 		return totalKilo;
-	}
-	
-	public BigDecimal getTotalProduction(String fkFarm) {
-		BigDecimal totalProduction = plotRepo.findAll(fkFarm)
-				.stream()
-				.map((plot) -> getTotalKilo(plot.getId()))
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
-		
-		if (totalProduction == null) {
-			return new BigDecimal(0);
-		}
-		
-		return totalProduction;
 	}
 
 }

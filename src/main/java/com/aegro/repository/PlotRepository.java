@@ -23,5 +23,5 @@ public interface PlotRepository {
 	public void deleteAll(String fkFarm);
 	
 	public BigDecimal getTotalArea(String fkFarm);
-
+	
 }

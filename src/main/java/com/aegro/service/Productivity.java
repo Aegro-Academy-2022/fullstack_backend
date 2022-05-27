@@ -51,7 +51,7 @@ public class Productivity {
 	}
 	
 	public BigDecimal getProductivityFarm(String idFarm) {
-		BigDecimal totalKilo = productionRepo.getTotalProduction(idFarm);
+		BigDecimal totalKilo = plotRepo.getTotalProduction(idFarm);
 		BigDecimal totalArea = plotRepo.getTotalArea(idFarm);
 		
 		if (validation.verifyNum(totalKilo) || validation.verifyNum(totalArea)) {
@@ -64,14 +64,18 @@ public class Productivity {
 	}
 	
 	public BigDecimal getProductivityPlot(String fkFarm, String idPlot) {
-		BigDecimal totalKilo = productionRepo.getTotalKilo(idPlot);
-		if (validation.verifyNum(totalKilo)) {
-			return new BigDecimal(0);
-		}
 		Plot plot = plotRepo.findById(fkFarm, idPlot);
+		
 		if(plot.isEmpty()) {
 			return null;
 		}
+		
+		BigDecimal totalKilo = productionRepo.getTotalKilo(idPlot);
+		
+		if (validation.verifyNum(totalKilo) || validation.verifyNum(plot.getArea())) {
+			return new BigDecimal(0);
+		}
+
 		return totalKilo.divide(plot.getArea(), 2, RoundingMode.HALF_UP);	
 	}
 

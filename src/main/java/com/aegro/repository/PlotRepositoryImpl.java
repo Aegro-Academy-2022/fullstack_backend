@@ -90,4 +90,17 @@ public class PlotRepositoryImpl implements PlotRepository{
 		}
 		return totalArea;
 	}
+	
+	public BigDecimal getTotalProduction(String fkFarm) {
+		BigDecimal totalProduction = findAll(fkFarm)
+				.stream()
+				.map((plot) -> productionRepo.getTotalKilo(plot.getId()))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		
+		if (totalProduction == null) {
+			return new BigDecimal(0);
+		}
+		
+		return totalProduction;
+	}
 }

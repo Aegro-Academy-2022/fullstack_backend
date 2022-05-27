@@ -21,7 +21,5 @@ public interface ProductionRepository {
 	public void deleteAll(String fkPlot);
 	
 	public BigDecimal getTotalKilo(String fkPlot);
-	
-	public BigDecimal getTotalProduction(String fkFarm);
 
 }
