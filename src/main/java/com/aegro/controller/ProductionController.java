@@ -28,33 +28,21 @@ public class ProductionController {
 	@PostMapping
 	public ResponseEntity<Production> createProduction(@PathVariable("fkFarm") String fkFarm, @PathVariable("fkPlot") String fkPlot, @RequestBody Production production) {
 		Production _production = productionService.insert(production, fkPlot, fkFarm);
-		
-		if(_production.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		
+
 		return new ResponseEntity<>(_production, HttpStatus.CREATED);
 	}
 
 	@GetMapping
 	public ResponseEntity<List<Production>> getAllProduction(@PathVariable("fkPlot") String fkPlot) {
 		List<Production> productions = productionService.getAll(fkPlot);
-		
-		if(productions.isEmpty()) {
-			return new ResponseEntity<>(productions, HttpStatus.NO_CONTENT);
-		}
-		
+
 		return new ResponseEntity<>(productions, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Production> getProduction(@PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id){
 		Production production = productionService.getById(fkPlot, id);
-		
-		if(production.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		
+
 		return new ResponseEntity<>(production, HttpStatus.OK);
 	}
 	
@@ -62,21 +50,13 @@ public class ProductionController {
 	public ResponseEntity<Production> updateProduction(@PathVariable("fkFarm") String fkFarm, @PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id, @RequestBody Production production) {
 		Production _production = productionService.update(fkFarm, fkPlot, id, production);
 		
-		if(_production.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		
 		return new ResponseEntity<>(_production, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Production> deleteProduction(@PathVariable("fkFarm") String fkFarm,@PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id){
-		boolean response = productionService.remove(fkFarm, fkPlot, id);
+		productionService.remove(fkFarm, fkPlot, id);
 		
-		if(response) {
-			return new ResponseEntity<>(HttpStatus.OK);
-		}
-		
-		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 }
