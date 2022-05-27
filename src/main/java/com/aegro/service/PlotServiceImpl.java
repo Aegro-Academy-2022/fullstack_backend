@@ -1,11 +1,11 @@
 package com.aegro.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aegro.exception.*;
 import com.aegro.model.Plot;
 import com.aegro.repository.PlotRepositoryImpl;
 
@@ -25,12 +25,12 @@ public class PlotServiceImpl implements PlotService{
 		try {
 			if(validation.verifyName(plot.getName())
 					|| validation.verifyNum(plot.getArea())) {
-				return new Plot();
+				throw new InvalidInputDataException();
 			}
 
 			return plotRepo.save(plot, fkFarm);
 		}catch(Exception e) {
-			return new Plot();
+			throw new InternalServerException("Não foi possível realizar a inserção");
 		}
 	}
 
@@ -39,7 +39,7 @@ public class PlotServiceImpl implements PlotService{
 		try {
 			return plotRepo.findAll(fkFarm);
 		}catch(Exception e) {
-			return new ArrayList<>();
+			throw new EmptyListException("talhão");
 		}
 	}
 
@@ -48,7 +48,7 @@ public class PlotServiceImpl implements PlotService{
 		try {
 			return plotRepo.findById(fkFarm, id);
 		}catch(Exception e) {
-			return new Plot();
+			throw new ResourceNotFoundException("Talhão");
 		}
 	}
 
@@ -57,34 +57,29 @@ public class PlotServiceImpl implements PlotService{
 		try {
 			if(validation.verifyName(plot.getName())
 					|| validation.verifyNum(plot.getArea())) {
-				return new Plot();
+				throw new InvalidInputDataException();
 			}
 			
 			Plot _plot = plotRepo.update(fkFarm, id, plot);
+						
+			productivity.defineProductivityPlot(fkFarm, id);
+			productivity.defineProductivityFarm(fkFarm);
 			
-			System.out.println(_plot.getId());
+			return _plot;
 			
-			if(productivity.defineProductivityPlot(fkFarm, id) && productivity.defineProductivityFarm(fkFarm)) {
-				return _plot;
-			}
-			
-			return new Plot();
 		}catch(Exception e) {
-			return new Plot();
+			throw new ResourceNotFoundException("Talhão");
 		}
 	}
 
 	@Override
-	public boolean remove(String fkFarm, String id) {
+	public void remove(String fkFarm, String id) {
 		try {
 			plotRepo.delete(fkFarm, id);
 			
-			if(productivity.defineProductivityFarm(fkFarm)) {
-				return true;
-			}
-			return false;
+			productivity.defineProductivityFarm(fkFarm);
 		}catch(Exception e) {
-			return false;
+			throw new ResourceNotFoundException("Talhão");
 		}
 	}
 

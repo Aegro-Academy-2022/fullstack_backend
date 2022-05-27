@@ -27,7 +27,7 @@ public class FarmServiceImpl implements FarmService {
 
 			return farmRepo.save(farm);
 		}catch(Exception e) {
-			throw new NoInsertionExecutedException();
+			throw new InternalServerException("Não foi possível realizar a inserção");
 		}
 	}
 

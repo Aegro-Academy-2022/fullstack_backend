@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aegro.exception.InternalServerException;
 import com.aegro.model.Plot;
 import com.aegro.repository.FarmRepositoryImpl;
 import com.aegro.repository.PlotRepositoryImpl;
@@ -25,28 +26,24 @@ public class Productivity {
 	@Autowired
 	private Validation validation;
 	
-	public boolean defineProductivityPlot(String fkFarm, String fkPlot) {
+	public void defineProductivityPlot(String fkFarm, String fkPlot) {
 		try {
 			BigDecimal productivityPlot = getProductivityPlot(fkFarm, fkPlot);
-			plotRepo.updateProductivity(fkFarm, fkPlot, productivityPlot);
-			
-			return true;		
+			plotRepo.updateProductivity(fkFarm, fkPlot, productivityPlot);		
 			
 		} catch (Exception e) {
-			return false;
+			throw new InternalServerException("Não foi possível realizar a definição de produtividade");
 		}
 		
 	}
 	
-	public boolean defineProductivityFarm(String fkFarm) {
+	public void defineProductivityFarm(String fkFarm) {
 		try {
 			BigDecimal productivityFarm = getProductivityFarm(fkFarm);
 			farmRepo.updateProductivity(fkFarm, productivityFarm);
 			
-			return true;
-			
 		}catch(Exception e) {
-			return false;
+			throw new InternalServerException("Não foi possível realizar a definição de produtividade");
 		}
 	}
 	

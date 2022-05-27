@@ -37,8 +37,8 @@ public class CommonExceptionHandler {
 	}
 	
 	
-	@ExceptionHandler(NoInsertionExecutedException.class)
-	public ResponseEntity<?> handlerNoInsertionExecutedException(NoInsertionExecutedException e){
+	@ExceptionHandler(InternalServerException.class)
+	public ResponseEntity<?> handlerInternalServerException(InternalServerException e){
 		CommonExceptionDetails rnfDetails = CommonExceptionDetails.Builder
 			.newBuilder()
 			.timestamp(new Date().getTime())
@@ -63,5 +63,4 @@ public class CommonExceptionHandler {
 		
 		return new ResponseEntity<>(rnfDetails, HttpStatus.NO_CONTENT);
 	}
-
 }

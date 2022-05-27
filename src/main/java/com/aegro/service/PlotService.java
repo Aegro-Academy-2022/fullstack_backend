@@ -13,6 +13,6 @@ public interface PlotService {
 	
 	Plot update(String fkFarm, String id, Plot plot);
 	
-	boolean remove(String fkFarm, String id);
+	void remove(String fkFarm, String id);
 
 }
