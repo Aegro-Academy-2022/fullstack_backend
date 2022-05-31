@@ -57,6 +57,6 @@ public class ProductionController {
 	public ResponseEntity<Production> deleteProduction(@PathVariable("fkFarm") String fkFarm,@PathVariable("fkPlot") String fkPlot, @PathVariable("id") String id){
 		productionService.remove(fkFarm, fkPlot, id);
 		
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

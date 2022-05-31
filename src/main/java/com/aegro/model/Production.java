@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -59,7 +58,10 @@ public class Production {
 	
 	@JsonIgnore
 	public boolean isEmpty() {
-		return ObjectUtils.isEmpty(this);
+		if(this.kilo == null && this.id ==null) {
+			return true;
+		}
+		return false;
 	}
 
 }

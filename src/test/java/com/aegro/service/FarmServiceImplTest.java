@@ -3,26 +3,36 @@ package com.aegro.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.Rule;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.aegro.exception.EmptyListException;
+import com.aegro.exception.InternalServerException;
+import com.aegro.exception.ResourceNotFoundException;
 import com.aegro.model.Farm;
 import com.aegro.repository.FarmRepositoryImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+import static org.assertj.core.api.Assertions.*;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FarmServiceImplTest {	
 	
 	@MockBean
 	private FarmRepositoryImpl farmRepo;
+	
+	@MockBean
+	private Validation validation;
+	
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
 	
 	@LocalServerPort
 	private int port;
@@ -31,14 +41,10 @@ public class FarmServiceImplTest {
 	private FarmServiceImpl farmService;
 	
 	private Farm farm;
-	private Farm farmEmpty;
-	private Farm farmBlank;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		farm = new Farm("1", "Test Farm");
-		farmEmpty = new Farm ("");
-		farmBlank = new Farm(" ");
 	}
 	
 	@Test
@@ -51,32 +57,13 @@ public class FarmServiceImplTest {
 	}
 	
 	@Test
-	public void naoDeveriaInserirFazendaComNomeVazio() {
-		Mockito.when(farmRepo.save(farmEmpty)).thenReturn(new Farm());
+	public void gerarExcecaoQuandoInserirFazendaComValorNulo(){		
+		Mockito.when(farmRepo.save(null)).thenReturn(null);
 		
-		Farm _farm = farmService.insert(farmEmpty);
-		
-		Assertions.assertTrue(_farm.isNull());
+		assertThatThrownBy(() -> farmService.insert(null))
+        .isInstanceOf(InternalServerException.class);
 	}
-	
-	@Test
-	public void naoDeveriaInserirFazendaComNomeEmBranco() {
-		Mockito.when(farmRepo.save(farmBlank)).thenReturn(new Farm());
-		
-		Farm _farm = farmService.insert(farmBlank);
-		
-		Assertions.assertTrue(_farm.isNull());
-	}
-	
-	@Test
-	public void gerarExcecaoQuandoInserirFazendaComValorNulo(){
-		Mockito.when(farmRepo.save(null)).thenThrow(new RuntimeException());
-		
-		Farm _farm = farmService.insert(null);
-		
-		Assertions.assertTrue(_farm.isNull());
-	}
-	
+
 	@Test 
 	public void deveriaRetornaListaComFazenda() {
 		List<Farm> farmList = new ArrayList<>();
@@ -91,11 +78,10 @@ public class FarmServiceImplTest {
 	
 	@Test
 	public void gerarExcecaoAoRetornarListaDeFazenda() {		
-		Mockito.when(farmRepo.findAll()).thenThrow(new RuntimeException());
+		Mockito.when(farmRepo.findAll()).thenThrow(new EmptyListException("fazenda"));
 		
-		List<Farm> _farm = farmService.getAll();
-		
-		Assertions.assertTrue(_farm.isEmpty());
+		assertThatThrownBy(() -> farmService.getAll())
+        .isInstanceOf(EmptyListException.class);
 	}
 	
 	@Test
@@ -109,11 +95,10 @@ public class FarmServiceImplTest {
 	
 	@Test
 	public void gerarExcecaoQuandoOIdDaFazendaForInvalido() {
-		Mockito.when(farmRepo.findById(null)).thenThrow(new RuntimeException());
+		Mockito.when(farmRepo.findById(null)).thenThrow(new ResourceNotFoundException("Fazenda"));
 		
-		Farm _farm = farmService.getById(null);
-		
-		Assertions.assertTrue(_farm.isNull());
+		assertThatThrownBy(() -> farmService.getById(null))
+        .isInstanceOf(ResourceNotFoundException.class);
 	}
 	
 	@Test
@@ -129,53 +114,21 @@ public class FarmServiceImplTest {
 	}
 	
 	@Test
-	public void naodeveriaAtulaizarDadosDaFazendaQuandoNomeForVazio() {		
-		Mockito.when(farmRepo.update(farm.getId(), farmEmpty)).thenReturn(new Farm());
+	public void gerarExcecaoAoAtualizarQuandoDadosDaFazendaQuandoForemInvalidos() {		
+		Mockito.when(farmRepo.update(farm.getId(), null)).thenThrow(new ResourceNotFoundException("Fazenda"));
 		
-		Farm _farm = farmService.update(farm.getId(), farmEmpty);
-		
-		Assertions.assertTrue(_farm.isNull());
-		
-	}
-	
-	@Test
-	public void naodeveriaAtulaizarDadosDaFazendaQuandoNomeEstiverEmBranco() {
-		Mockito.when(farmRepo.update(farm.getId(), farmBlank)).thenReturn(new Farm());
-		
-		Farm _farm = farmService.update(farm.getId(), farmBlank);
-		
-		Assertions.assertTrue(_farm.isNull());
+		assertThatThrownBy(() -> farmService.update(farm.getId(), null))
+        .isInstanceOf(ResourceNotFoundException.class);
 		
 	}
 	
-	@Test
-	public void gerarExcecaoQuandoAtualizarFazendaComIdInvalido() {
-		Farm farmAux = new Farm(farm.getId(), "Test Farm 2");
-
-		Mockito.when(farmRepo.update(null, farmAux)).thenThrow(new RuntimeException());
-		
-		Farm _farm = farmService.update(null, farmAux);
-		
-		Assertions.assertTrue(_farm.isNull());
-	}
-	
-	@Test
-	public void deveiaRemoverFazendaComIdValido() {
-		Mockito.when(farmRepo.delete(farm.getId())).thenReturn(null);
-		
-		boolean _farm = farmService.remove(farm.getId());
-		
-		Assertions.assertTrue(_farm);
-		
-	}
 	
 	@Test
 	public void gerarExcecaoQuandoTentarRemoverFazendaComIdInvalido() {
-		Mockito.when(farmRepo.delete(null)).thenThrow(new RuntimeException());
+		Mockito.when(farmRepo.delete(null)).thenThrow(new ResourceNotFoundException("Fazenda"));
 		
-		boolean _farm = farmService.remove(null);
-		
-		Assertions.assertFalse(_farm);
+		assertThatThrownBy(() -> farmService.remove(null))
+        .isInstanceOf(ResourceNotFoundException.class);
 	}
 
 }

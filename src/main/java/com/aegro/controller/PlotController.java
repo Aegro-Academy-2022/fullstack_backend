@@ -57,7 +57,7 @@ public class PlotController {
 	public ResponseEntity<Plot> deletePlot(@PathVariable("fk") String fk, @PathVariable("id") String id){
 		plotService.remove(fk, id);
 
-		return new ResponseEntity<>( HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>( HttpStatus.OK);
 	}
 
 }

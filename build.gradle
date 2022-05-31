@@ -20,6 +20,7 @@ dependencies {
 	implementation 'org.mongodb:mongodb-driver-sync'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompile("org.assertj:assertj-core:3.11.1")
 }
 
 tasks.named('test') {

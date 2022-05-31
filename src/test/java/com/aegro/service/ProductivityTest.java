@@ -3,17 +3,14 @@ package com.aegro.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.aegro.model.Farm;
 import com.aegro.model.Plot;
@@ -22,7 +19,6 @@ import com.aegro.repository.PlotRepositoryImpl;
 import com.aegro.repository.ProductionRepositoryImpl;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProductivityTest {
 	
@@ -40,12 +36,14 @@ public class ProductivityTest {
 	
 	private Farm farm;
 	
-	Plot plot;
+	private Plot plot;
+	private Plot plotNull;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {		
 		farm = new Farm("1", "Test Farm");
 		plot = new Plot("2", "Test Plot", new BigDecimal(40), farm.getId());
+		plotNull = new Plot();
 	}
 
 	@Test
@@ -62,7 +60,49 @@ public class ProductivityTest {
 	}
 	
 	@Test
-	public void gerarExcecaoQuandoTentarDefinirProdutividadeDeTalhao() {
+	public void deveriaRetornarZeroQuandoKiloOuAreaForMenorIgualAZero() throws Exception{
+		BigDecimal productValue = new BigDecimal(0);
+		
+		Mockito.when(productionRepo.getTotalKilo(plot.getId())).thenReturn(productValue);
+		Mockito.when(plotRepo.findById(farm.getId(), plot.getId())).thenReturn(plot);
+		
+		BigDecimal response = productivity.getProductivityPlot(farm.getId(), plot.getId());
+		
+		Assertions.assertEquals(response.compareTo(new BigDecimal(0)), 0);
+	}
+	
+	@Test
+	public void deveriaRetornarNuloQuandoNaoHouverTalhao() throws Exception{
+		Mockito.when(plotRepo.findById(farm.getId(), "")).thenReturn(plotNull);
+				
+		Assertions.assertNull(productivity.getProductivityPlot(farm.getId(), ""));
+	}
+	
+	@Test 
+	public void deveriaRetornarProdutividadeDeFazenda() {
+		BigDecimal area = new BigDecimal(50);
+		BigDecimal production =  new BigDecimal(200);
+		
+		Mockito.when(plotRepo.getTotalProduction(farm.getId())).thenReturn(production);
+		Mockito.when(plotRepo.getTotalArea(farm.getId())).thenReturn(area);
+		
+		BigDecimal response = productivity.getProductivityFarm(farm.getId());
+		BigDecimal aux = production.divide(area, 2, RoundingMode.HALF_UP); 
+		
+		Assertions.assertEquals(response.compareTo(aux), 0);
+	}
+	
+	@Test
+	public void deveriaRetornarZeroQuandoValoresForemMenorIgualAZero() {
+		BigDecimal area = new BigDecimal(0);
+		BigDecimal production =  new BigDecimal(200);
+		
+		Mockito.when(plotRepo.getTotalProduction(farm.getId())).thenReturn(production);
+		Mockito.when(plotRepo.getTotalArea(farm.getId())).thenReturn(area);
+		
+		BigDecimal response = productivity.getProductivityFarm(farm.getId());
+		
+		Assertions.assertEquals(response.compareTo(new BigDecimal(0)), 0);
 		
 	}
 
