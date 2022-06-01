@@ -3,11 +3,9 @@ package com.aegro.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,9 +28,6 @@ public class FarmServiceImplTest {
 	
 	@MockBean
 	private Validation validation;
-	
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
 	
 	@LocalServerPort
 	private int port;

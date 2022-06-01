@@ -1,6 +1,5 @@
 package com.aegro.service;
 
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -105,6 +104,5 @@ public class ProductivityTest {
 		Assertions.assertEquals(response.compareTo(new BigDecimal(0)), 0);
 		
 	}
-
 
 }
