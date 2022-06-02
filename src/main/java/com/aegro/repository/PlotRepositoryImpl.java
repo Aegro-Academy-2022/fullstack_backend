@@ -67,10 +67,6 @@ public class PlotRepositoryImpl implements PlotRepository{
 	public DeleteResult delete(String fkFarm, String id) {
 		Plot plot = findById(fkFarm, id);
 		
-		if(plot.isEmpty()) {
-			return null;
-		}
-		
 		productionRepo.deleteAll(plot.getId());
 		return mongoTemplate.remove(plot);
 	}

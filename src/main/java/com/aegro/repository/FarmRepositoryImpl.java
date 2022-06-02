@@ -60,10 +60,6 @@ public class FarmRepositoryImpl implements FarmRepository {
 	
 	public DeleteResult delete(String id) {
 		Farm farm = findById(id);
-		
-		if(farm.isEmpty()) {
-			return null;
-		}
 	
 		plotRepo.deleteAll(farm.getId());
 		return mongoTemplate.remove(farm);

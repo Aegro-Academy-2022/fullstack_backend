@@ -68,7 +68,7 @@ public class FarmServiceImplTest {
 		
 		List<Farm> _farm = farmService.getAll();
 		
-		Assertions.assertFalse(_farm.isEmpty());
+		Assertions.assertEquals(_farm, farmList);
 	}
 	
 	@Test

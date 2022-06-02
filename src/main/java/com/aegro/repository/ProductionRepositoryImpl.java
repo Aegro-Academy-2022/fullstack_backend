@@ -47,9 +47,6 @@ public class ProductionRepositoryImpl implements ProductionRepository{
 	
 	public DeleteResult delete(String fkPlot, String id) {
 		Production production = findById(fkPlot, id);
-		if(production.isEmpty()) {
-			return null;
-		}
 		
 		return mongoTemplate.remove(production);
 	}

@@ -29,6 +29,9 @@ public class PlotServiceImpl implements PlotService{
 			}
 
 			return plotRepo.save(plot, fkFarm);
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
+			
 		}catch(Exception e) {
 			throw new InternalServerException("Não foi possível realizar a inserção");
 		}
@@ -66,6 +69,9 @@ public class PlotServiceImpl implements PlotService{
 			productivity.defineProductivityFarm(fkFarm);
 			
 			return _plot;
+			
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
 			
 		}catch(Exception e) {
 			throw new ResourceNotFoundException("Talhão");

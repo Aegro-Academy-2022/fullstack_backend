@@ -35,6 +35,9 @@ public class ProductionServiceImpl implements ProductionService{
 			productivity.defineProductivityFarm(fkFarm);
 			
 			return _production;
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
+			
 		}catch(Exception e) {
 			throw new ResourceNotFoundException("Produção");
 		}
@@ -71,6 +74,9 @@ public class ProductionServiceImpl implements ProductionService{
 			productivity.defineProductivityFarm(fkFarm);
 			
 			return _production;
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
+			
 		}catch(Exception e) {
 			throw new ResourceNotFoundException("Produção");
 		}

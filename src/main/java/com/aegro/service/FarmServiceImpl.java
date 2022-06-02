@@ -26,6 +26,9 @@ public class FarmServiceImpl implements FarmService {
 			}
 
 			return farmRepo.save(farm);
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
+			
 		}catch(Exception e) {
 			throw new InternalServerException("Não foi possível realizar a inserção");
 		}
@@ -57,6 +60,9 @@ public class FarmServiceImpl implements FarmService {
 			}
 			
 			return farmRepo.update(id, farm);
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
+			
 		}catch(Exception e) {
 			throw new ResourceNotFoundException("Fazenda");
 		}
