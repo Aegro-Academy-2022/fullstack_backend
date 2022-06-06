@@ -78,7 +78,7 @@ public class Plot {
 	}
 	
 	@JsonIgnore
-	public boolean isNull() {
+	public boolean isEmpty() {
 		if(this.name == null && this.id ==null) {
 			return true;
 		}

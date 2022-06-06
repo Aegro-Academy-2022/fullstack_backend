@@ -57,7 +57,7 @@ public class Production {
 	}
 	
 	@JsonIgnore
-	public boolean isNull() {
+	public boolean isEmpty() {
 		if(this.kilo == null && this.id ==null) {
 			return true;
 		}

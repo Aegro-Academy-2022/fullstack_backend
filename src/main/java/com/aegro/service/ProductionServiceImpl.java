@@ -1,18 +1,20 @@
 package com.aegro.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aegro.exception.EmptyListException;
+import com.aegro.exception.InvalidInputDataException;
+import com.aegro.exception.ResourceNotFoundException;
 import com.aegro.model.Production;
-import com.aegro.repository.ProductionRepository;
+import com.aegro.repository.ProductionRepositoryImpl;
 
 @Service
 public class ProductionServiceImpl implements ProductionService{
 	@Autowired
-	private ProductionRepository productionRepo;
+	private ProductionRepositoryImpl productionRepo;
 	
 	@Autowired
 	private Validation validation;
@@ -24,18 +26,20 @@ public class ProductionServiceImpl implements ProductionService{
 	public Production insert(Production production, String fkPlot, String fkFarm) {
 		try {
 			if(validation.verifyNum(production.getKilo())) {
-				return new Production();
+				throw new InvalidInputDataException();
 			}
 
-			Production _production =productionRepo.save(production, fkPlot);
+			Production _production = productionRepo.save(production, fkPlot);
 			
-			if(productivity.defineProductivityPlot(fkFarm, fkPlot) && productivity.defineProductivityFarm(fkFarm)) {
-				return _production;
-			}
+			productivity.defineProductivityPlot(fkFarm, fkPlot);
+			productivity.defineProductivityFarm(fkFarm);
 			
-			return new Production();
+			return _production;
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
+			
 		}catch(Exception e) {
-			return new Production();
+			throw new ResourceNotFoundException("Produção");
 		}
 	}
 
@@ -44,7 +48,7 @@ public class ProductionServiceImpl implements ProductionService{
 		try {
 			return productionRepo.findAll(fkPlot);
 		}catch(Exception e) {
-			return new ArrayList<>();
+			throw new EmptyListException("produção");
 		}
 	}
 
@@ -53,35 +57,41 @@ public class ProductionServiceImpl implements ProductionService{
 		try {
 			return productionRepo.findById(fkPlot, id);
 		}catch(Exception e) {
-			return new Production();
+			throw new ResourceNotFoundException("Produção");
 		}
 	}
 
 	@Override
-	public Production update(String fkPlot, String id, Production production) {
+	public Production update(String fkFarm, String fkPlot, String id, Production production) {
 		try {
 			if(validation.verifyNum(production.getKilo())) {
-				return new Production();
+				throw new InvalidInputDataException();
 			}
 			
-			return productionRepo.update(fkPlot,id, production);
+			Production _production = productionRepo.update(fkPlot,id, production);
+			
+			productivity.defineProductivityPlot(fkFarm, fkPlot);
+			productivity.defineProductivityFarm(fkFarm);
+			
+			return _production;
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
+			
 		}catch(Exception e) {
-			return new Production();
+			throw new ResourceNotFoundException("Produção");
 		}
 	}
 
 	@Override
-	public boolean remove(String fkFarm, String fkPlot, String id) {
+	public void remove(String fkFarm, String fkPlot, String id) {
 		try {
 			productionRepo.delete(fkPlot, id);
 			
-			if(productivity.defineProductivityPlot(fkFarm, fkPlot) && productivity.defineProductivityFarm(fkFarm)) {
-				return true;
-			}
+			productivity.defineProductivityPlot(fkFarm, fkPlot);
+			productivity.defineProductivityFarm(fkFarm);
 			
-			return false;
 		}catch(Exception e) {
-			return false;
+			throw new ResourceNotFoundException("Produção");
 		}
 	}
 

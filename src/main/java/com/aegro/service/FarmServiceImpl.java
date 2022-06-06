@@ -1,19 +1,19 @@
 package com.aegro.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aegro.exception.*;
 import com.aegro.model.Farm;
-import com.aegro.repository.FarmRepository;
+import com.aegro.repository.FarmRepositoryImpl;
 
 @Service
 public class FarmServiceImpl implements FarmService {
 	
 	@Autowired
-	private FarmRepository farmRepo;
+	private FarmRepositoryImpl farmRepo;
 	
 	@Autowired
 	private Validation validation;
@@ -22,12 +22,15 @@ public class FarmServiceImpl implements FarmService {
 	public Farm insert(Farm farm) {
 		try {
 			if(validation.verifyName(farm.getName())) {
-				return new Farm();
+				throw new InvalidInputDataException();
 			}
 
 			return farmRepo.save(farm);
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
+			
 		}catch(Exception e) {
-			return new Farm();
+			throw new InternalServerException("Não foi possível realizar a inserção");
 		}
 	}
 
@@ -36,7 +39,7 @@ public class FarmServiceImpl implements FarmService {
 		try {
 			return farmRepo.findAll();
 		}catch(Exception e) {
-			return new ArrayList<>();
+			throw new EmptyListException("fazenda");
 		}
 	}
 
@@ -45,7 +48,7 @@ public class FarmServiceImpl implements FarmService {
 		try {
 			return farmRepo.findById(id);
 		}catch(Exception e) {
-			return new Farm();
+			throw new ResourceNotFoundException("Fazenda");
 		}
 	}
 
@@ -53,22 +56,24 @@ public class FarmServiceImpl implements FarmService {
 	public Farm update(String id, Farm farm) {
 		try {
 			if(validation.verifyName(farm.getName())) {
-				return new Farm();
+				throw new InvalidInputDataException();
 			}
 			
 			return farmRepo.update(id, farm);
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
+			
 		}catch(Exception e) {
-			return new Farm();
+			throw new ResourceNotFoundException("Fazenda");
 		}
 	}
 
 	@Override
-	public boolean remove(String id) {
+	public void remove(String id) {
 		try {
 			farmRepo.delete(id);
-			return true;
 		}catch(Exception e) {
-			return false;
+			throw new ResourceNotFoundException("Fazenda");
 		}
 	}
 

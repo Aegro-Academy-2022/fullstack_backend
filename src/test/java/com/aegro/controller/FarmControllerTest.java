@@ -1,114 +1,98 @@
 package com.aegro.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
 import com.aegro.model.Farm;
 import com.aegro.service.FarmServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
+
+import java.util.ArrayList;
+import java.util.List;
+
+@WebMvcTest(controllers = FarmController.class)
 public class FarmControllerTest {
+
 	@Autowired
-	private TestRestTemplate restTemplate;
-	@LocalServerPort
-	private int port;
+	private MockMvc mvc;
+	
 	@MockBean
 	private FarmServiceImpl farmService;
 	
+	private final String url = "http://localhost:8080/api/v1/farms/";
+	
+	private ObjectMapper mapper = new ObjectMapper();
+	
+	private Farm farm;
+	
+	@BeforeEach
+	public void setUp() {
+		farm = new Farm("1", "Test Farm");
+	}
+	
 	@Test
-	public void deveriaCriarNovaFazenda() {
-		Farm farm = new Farm("Test Farm");
+	public void deveriaCriarFazenda() throws Exception{
 		Mockito.when(farmService.insert(farm)).thenReturn(farm);
+		String farmJson = mapper.writeValueAsString(farm);
 		
-		ResponseEntity<String> response = restTemplate.postForEntity("/api/v1/farms",farm, String.class);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.CREATED);
+		mvc.perform(post(url)
+				.content(farmJson)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated());
 	}
 	
 	@Test
-	public void naoDeveriaCriarFazendaComNomeEmBranco() {
-		Farm farm = new Farm("  ");
-		Mockito.when(farmService.insert(farm)).thenReturn(farm);
-		
-		ResponseEntity<String> response = restTemplate.postForEntity("/api/v1/farms",farm, String.class);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
-	}
-	
-	@Test
-	public void naoDeveriaCriarFazendaComNomeVazio() {
-		Farm farm = new Farm("");
-		Mockito.when(farmService.insert(farm)).thenReturn(farm);
-		
-		ResponseEntity<String> response = restTemplate.postForEntity("/api/v1/farms",farm, String.class);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
-	}
-	
-	@Test
-	public void naoDeveriaCriarFazendaComNomeNulo() {
-		Farm farm = new Farm(null);
-		Mockito.when(farmService.insert(farm)).thenReturn(null);
-		
-		ResponseEntity<String> response = restTemplate.postForEntity("/api/v1/farms",farm, String.class);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-	
-	@Test
-	public void deveriaRetornarListaVaziaDeFazendas() {
-		List<Farm> farms = new ArrayList<>();
-		
-		Mockito.when(farmService.getAll()).thenReturn(farms);
-		
-		ResponseEntity<String> response = restTemplate.getForEntity("/api/v1/farms", String.class);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.NO_CONTENT);
-	}
-	
-	@Test
-	public void deveriaRetornarListaDeFazendas() {
-		List<Farm> farms = new ArrayList<>();
-		Farm farm = new Farm("Test Farm");
-		
+	public void deveriaBuscarListaDeFazendas() throws Exception{
+		List <Farm> farms = new ArrayList<>();
 		farms.add(farm);
 		
 		Mockito.when(farmService.getAll()).thenReturn(farms);
+		String farmsJson = mapper.writeValueAsString(farms);
 		
-		ResponseEntity<String> response = restTemplate.getForEntity("/api/v1/farms", String.class);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		mvc.perform(get(url))
+				.andExpect(status().isOk())
+				.andExpect(content().string(farmsJson));
 	}
 	
 	@Test
-	public void naoDeveriaRetornarFazendaQuandoOIdForInvalido() {	
-		String id = "1";
-		
-		Mockito.when(farmService.getById(id)).thenReturn(null);
-		
-		ResponseEntity<String> response = restTemplate.getForEntity("/api/v1/farms/{id}", String.class, id);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
-	}
-	
-	@Test
-	public void deveriaRetornarUmaFazendaQuandoOIdForValido() {	
-		Farm farm = new Farm("1", "Test Farm");
-		
+	public void deveriaBuscarFazendaPorId() throws Exception{
 		Mockito.when(farmService.getById(farm.getId())).thenReturn(farm);
+		String farmJson = mapper.writeValueAsString(farm);
 		
-		ResponseEntity<String> response = restTemplate.getForEntity("/api/v1/farms/{id}", String.class, farm.getId());
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		mvc.perform(get(url + farm.getId()))
+				.andExpect(status().isOk())
+				.andExpect(content().string(farmJson));
 	}
 	
+	@Test
+	public void deveriaAtualizarFazenda() throws Exception {
+		
+		String farmJson = mapper.writeValueAsString(farm);
+		farm.setName("Test Farm 2");
+		
+		Mockito.when(farmService.update(farm.getId(), farm)).thenReturn(farm);
+		
+		mvc.perform(put (url + farm.getId())
+				.content(farmJson)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
 	
+	@Test
+	public void deveriaRemoverFazenda() throws Exception{
+		Mockito.doNothing().when(farmService).remove(farm.getId());
+		
+		mvc.perform(delete (url + farm.getId()))
+				.andExpect(status().isOk());
+	}
 }

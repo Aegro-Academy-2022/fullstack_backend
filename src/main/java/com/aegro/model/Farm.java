@@ -57,7 +57,7 @@ public class Farm {
 	}
 	
 	@JsonIgnore
-	public boolean isNull() {
+	public boolean isEmpty() {
 		if(this.name == null && this.id ==null) {
 			return true;
 		}

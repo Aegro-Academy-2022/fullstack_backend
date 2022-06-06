@@ -14,7 +14,7 @@ public interface FarmService {
 	
 	Farm update(String id, Farm farm);
 	
-	boolean remove(String id);
+	void remove(String id);
 	
 
 }

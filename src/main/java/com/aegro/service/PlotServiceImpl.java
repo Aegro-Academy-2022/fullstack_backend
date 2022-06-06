@@ -1,18 +1,18 @@
 package com.aegro.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aegro.exception.*;
 import com.aegro.model.Plot;
-import com.aegro.repository.PlotRepository;
+import com.aegro.repository.PlotRepositoryImpl;
 
 @Service
 public class PlotServiceImpl implements PlotService{
 	@Autowired
-	private PlotRepository plotRepo;
+	private PlotRepositoryImpl plotRepo;
 	
 	@Autowired
 	private Validation validation;
@@ -25,12 +25,15 @@ public class PlotServiceImpl implements PlotService{
 		try {
 			if(validation.verifyName(plot.getName())
 					|| validation.verifyNum(plot.getArea())) {
-				return new Plot();
+				throw new InvalidInputDataException();
 			}
 
 			return plotRepo.save(plot, fkFarm);
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
+			
 		}catch(Exception e) {
-			return new Plot();
+			throw new InternalServerException("Não foi possível realizar a inserção");
 		}
 	}
 
@@ -39,7 +42,7 @@ public class PlotServiceImpl implements PlotService{
 		try {
 			return plotRepo.findAll(fkFarm);
 		}catch(Exception e) {
-			return new ArrayList<>();
+			throw new EmptyListException("talhão");
 		}
 	}
 
@@ -48,7 +51,7 @@ public class PlotServiceImpl implements PlotService{
 		try {
 			return plotRepo.findById(fkFarm, id);
 		}catch(Exception e) {
-			return new Plot();
+			throw new ResourceNotFoundException("Talhão");
 		}
 	}
 
@@ -57,26 +60,32 @@ public class PlotServiceImpl implements PlotService{
 		try {
 			if(validation.verifyName(plot.getName())
 					|| validation.verifyNum(plot.getArea())) {
-				return new Plot();
+				throw new InvalidInputDataException();
 			}
 			
-			return plotRepo.update(fkFarm,id, plot);
+			Plot _plot = plotRepo.update(fkFarm, id, plot);
+						
+			productivity.defineProductivityPlot(fkFarm, id);
+			productivity.defineProductivityFarm(fkFarm);
+			
+			return _plot;
+			
+		}catch(InvalidInputDataException e) {
+			throw new InvalidInputDataException();
+			
 		}catch(Exception e) {
-			return new Plot();
+			throw new ResourceNotFoundException("Talhão");
 		}
 	}
 
 	@Override
-	public boolean remove(String fkFarm, String id) {
+	public void remove(String fkFarm, String id) {
 		try {
 			plotRepo.delete(fkFarm, id);
 			
-			if(productivity.defineProductivityFarm(fkFarm)) {
-				return true;
-			}
-			return false;
+			productivity.defineProductivityFarm(fkFarm);
 		}catch(Exception e) {
-			return false;
+			throw new ResourceNotFoundException("Talhão");
 		}
 	}
 

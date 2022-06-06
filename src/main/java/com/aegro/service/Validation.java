@@ -15,7 +15,7 @@ public class Validation {
 	}
 	
 	public boolean verifyNum(BigDecimal area) {
-		if(area.compareTo(BigDecimal.ZERO) == 0) {
+		if(area.compareTo(BigDecimal.ZERO) <= 0) {
 			return true;
 		}
 		return false;
