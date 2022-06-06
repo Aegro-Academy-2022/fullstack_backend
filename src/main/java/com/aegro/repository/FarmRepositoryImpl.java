@@ -39,12 +39,10 @@ public class FarmRepositoryImpl implements FarmRepository {
 	}
 	
 	public Farm update(String id, Farm farm) {
-		if(findById(id).isEmpty()) {
-			return null;
-		}
+		Farm _farm = findById(id);
 		
-		farm.setId(id);
-		return mongoTemplate.save(farm);
+		_farm.setName(farm.getName());
+		return mongoTemplate.save(_farm);
 	}
 	
 	public Farm updateProductivity(String id, BigDecimal productivity) {
